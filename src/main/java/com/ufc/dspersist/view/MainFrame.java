@@ -5,12 +5,14 @@ import com.ufc.dspersist.controller.AutorController;
 import com.ufc.dspersist.controller.LeituraController;
 import com.ufc.dspersist.controller.UsuarioController;
 import com.ufc.dspersist.model.Usuario;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.swing.*;
 import java.awt.*;
 
+@Slf4j
 @Component
 public class MainFrame extends JFrame {
 
@@ -202,12 +204,19 @@ public class MainFrame extends JFrame {
         autorBriefTextArea.setLineWrap(true);
 
         addButton.addActionListener(e -> {
+        try {
             String autorName = authorNameField.getText();
             String autorBrief = autorBriefTextArea.getText();
             autorController.saveAutor(autorName, autorBrief);
             authorNameField.setText("");
             autorBriefTextArea.setText("");
-        });
+            JOptionPane.showMessageDialog(null, "Autor adicionado com sucesso.");
+            log.info("Autor adicionado com sucesso");
+        } catch (Exception ex) {
+            log.error("Erro ao adicionar autor: {}", ex.getMessage(), ex);
+            JOptionPane.showMessageDialog(null, "Erro ao adicionar autor. Tente Novamente.");
+        }
+    });
 
         layout.setAutoCreateGaps(true);
         layout.setAutoCreateContainerGaps(true);

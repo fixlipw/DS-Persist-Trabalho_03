@@ -110,10 +110,13 @@ public class CreateLeituraPanel extends JPanel {
                 if (autor != null) {
                     Leitura novaLeitura = new Leitura();
                     novaLeitura.setTitle(titleField.getText());
+                    novaLeitura.setAuthorname(autor.getAuthorName());
                     novaLeitura.setAutor(autor);
                     novaLeitura.setPagesQtd(Integer.parseInt(pagesQtdField.getText()));
                     novaLeitura.setType(BookType.getByType((String) typeBox.getSelectedItem()));
                     novaLeitura.setStatus(BookStatus.getByStatus((String) statusBox.getSelectedItem()));
+                    novaLeitura.setUsuario(usuario);
+
 
                     leituraController.saveLeitura(novaLeitura);
 

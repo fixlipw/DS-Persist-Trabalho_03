@@ -24,6 +24,10 @@ public class AutorPanel extends JPanel {
     private void initComponents() {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
+        JLabel titleLabel = new JLabel("Todos os autores");
+        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        add(titleLabel);
+
         List<Autor> autores = autorController.getAllAuthors();
 
         JPanel line = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -44,6 +48,7 @@ public class AutorPanel extends JPanel {
             add(line);
         }
     }
+
 
     private JButton createAutorButton(Autor autor) {
         JButton autorButton = new JButton(autor.getAuthorName());

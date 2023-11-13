@@ -50,8 +50,15 @@ public class ViewLeituraPanel extends JPanel {
                         JMenuItem delete = new JMenuItem("Deletar Leitura");
 
                         annotate.addActionListener(actionListener -> {
-                            String annotation = JOptionPane.showInputDialog("Digite sua anotação:");
-                            anotacaoController.saveAnotacao(new Anotacao(), leitura, annotation);
+                            try {
+                                String annotation = JOptionPane.showInputDialog("Digite sua anotação:");
+                                anotacaoController.saveAnotacao(new Anotacao(), leitura, annotation);
+                                JOptionPane.showMessageDialog(null, "Anotação adicionada com sucesso.");
+                                log.info("Info: Anotação adicionada com sucesso.");
+                            } catch (Exception exception) {
+                                JOptionPane.showMessageDialog(null, "Erro ao excluir leitura. Tente novamente.");
+                                    log.error("Erro: {}", exception.getMessage(), exception);
+                            }
                         });
                         delete.addActionListener(actionListener -> {
                             int confirm = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja deletar a leitura: \"" + leitura.getTitle() + "\"", "Confirmação", JOptionPane.YES_NO_OPTION);
@@ -62,7 +69,7 @@ public class ViewLeituraPanel extends JPanel {
                                     JOptionPane.showMessageDialog(null, "Leitura excluída com sucesso!");
                                     log.info("Info: Leitura " + leitura.getTitle() + " excluída com sucesso.");
                                 } catch (Exception exception) {
-                                    JOptionPane.showMessageDialog(null, "Erro ao excluir leitura. Consulte o log para mais informações.");
+                                    JOptionPane.showMessageDialog(null, "Erro ao excluir leitura. Tente novamente.");
                                     log.error("Erro ao excluir leitura: {}", exception.getMessage(), exception);
                                 }
                             }

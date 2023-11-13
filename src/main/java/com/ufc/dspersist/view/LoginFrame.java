@@ -159,7 +159,7 @@ public class LoginFrame extends JFrame {
             }
         } catch (Exception e) {
             log.error("Erro: {}", e.getMessage(), e);
-            JOptionPane.showMessageDialog(this, "Erro ao processar login. Tente novamente.");
+            JOptionPane.showMessageDialog(this, "Erro: " + e.getMessage());
         }
     }
 
@@ -169,7 +169,7 @@ public class LoginFrame extends JFrame {
             JOptionPane.showMessageDialog(this, "Cadastro realizado com sucesso!");
             log.info("Info: Usuário cadastrado com sucesso.");
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Erro ao processar cadastro. Tente novamente.");
+            JOptionPane.showMessageDialog(this, "Erro: " + e.getMessage());
             log.error("Erro: {}", e.getMessage(), e);
         }
     }

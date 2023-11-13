@@ -134,11 +134,6 @@ CREATE TABLE usuarios
 CREATE UNIQUE INDEX uk_m2dvbwfge291euvmk6vkkocao
     ON usuarios (username);
 
-CREATE TABLE anotacoes_seq
-(
-    next_val BIGINT
-);
-
 INSERT INTO anotacoes_seq
 VALUES (1);
 
