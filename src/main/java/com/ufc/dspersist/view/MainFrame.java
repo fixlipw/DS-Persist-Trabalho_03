@@ -26,8 +26,8 @@ public class MainFrame extends JFrame {
     private JMenuItem listarTodasLeiturasItem;
     private JMenuItem listarEmAndamentoItem;
     private JMenuItem listarConcluidasItem;
-    private JMenuItem listarPorAutorItem;
-    private JMenuItem listarPorTituloItem;
+    private JMenuItem listarNaoLidoItem;
+    private JMenuItem listarAbandonadoItem;
 
     private JMenuItem updateLeituraMenuItem;
 
@@ -40,6 +40,18 @@ public class MainFrame extends JFrame {
     private LeituraController leituraController;
     private AutorController autorController;
     private AnotacaoController anotacaoController;
+
+    public MainFrame() {
+        super("Tela inicial");
+        setSize(new Dimension(500, 400));
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        initComponents();
+
+        setResizable(false);
+        setVisible(false);
+    }
 
     @Autowired
     private void setUsuarioController(UsuarioController usuarioController) {
@@ -61,18 +73,6 @@ public class MainFrame extends JFrame {
         this.anotacaoController = anotacaoController;
     }
 
-    public MainFrame() {
-        super("Tela inicial");
-        setSize(new Dimension(500, 400));
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-
-        initComponents();
-
-        setResizable(false);
-        setVisible(false);
-    }
-
     public void setLoggedUsuario(Usuario usuario) {
         this.usuario = usuario;
     }
@@ -92,13 +92,13 @@ public class MainFrame extends JFrame {
         listarTodasLeiturasItem = new JMenuItem("Todas as Leituras");
         listarEmAndamentoItem = new JMenuItem("Leituras em Andamento");
         listarConcluidasItem = new JMenuItem("Leituras Concluídas");
-        listarPorAutorItem = new JMenuItem("Leituras por Autor");
-        listarPorTituloItem = new JMenuItem("Leituras por Título");
+        listarNaoLidoItem = new JMenuItem("Leituras Não Lidas");
+        listarAbandonadoItem = new JMenuItem("Leituras Abandonadas");
         readLeituraMenuItem.add(listarTodasLeiturasItem);
         readLeituraMenuItem.add(listarEmAndamentoItem);
         readLeituraMenuItem.add(listarConcluidasItem);
-        readLeituraMenuItem.add(listarPorAutorItem);
-        readLeituraMenuItem.add(listarPorTituloItem);
+        readLeituraMenuItem.add(listarNaoLidoItem);
+        readLeituraMenuItem.add(listarAbandonadoItem);
         updateLeituraMenuItem = new JMenuItem("Atualizar Leitura");
 
         readAnotacaoMenuItem = new JMenuItem("Visualizar Minhas Anotações");
@@ -160,16 +160,6 @@ public class MainFrame extends JFrame {
             viewLeituraPanel.setListarLeiturasConcluidasViewPanel();
             cardLayout.show(cardPanel, "viewLeiturasCard");
         });
-        listarPorTituloItem.addActionListener(e -> {
-            viewLeituraPanel = new ViewLeituraPanel(cardPanel, usuario, leituraController, anotacaoController);
-            viewLeituraPanel.setListarLeiturasTituloViewPanel();
-            cardLayout.show(cardPanel, "viewLeiturasCard");
-        });
-        listarPorAutorItem.addActionListener(e -> {
-            viewLeituraPanel = new ViewLeituraPanel(cardPanel, usuario, leituraController, anotacaoController);
-            viewLeituraPanel.setListarLeiturasAutorViewPanel();
-            cardLayout.show(cardPanel, "viewLeiturasCard");
-        });
         createAutorMenuItem.addActionListener(e -> {
             setCreateAutoresCard();
             cardLayout.show(cardPanel, "createAutoresCard");
@@ -177,6 +167,20 @@ public class MainFrame extends JFrame {
         readAutorMenuItem.addActionListener(e -> {
             setReadAutoresCard();
             cardLayout.show(cardPanel, "readAutoresCard");
+        });
+        readAnotacaoMenuItem.addActionListener(e -> {
+            setReadAnotacaoCard();
+            cardLayout.show(cardPanel, "readAnotacaoCard");
+        });
+        listarNaoLidoItem.addActionListener(e -> {
+            viewLeituraPanel = new ViewLeituraPanel(cardPanel, usuario, leituraController, anotacaoController);
+            viewLeituraPanel.setListarLeiturasNaoLidasViewPanel();
+            cardLayout.show(cardPanel, "viewLeiturasCard");
+        });
+        listarAbandonadoItem.addActionListener(e -> {
+            viewLeituraPanel = new ViewLeituraPanel(cardPanel, usuario, leituraController, anotacaoController);
+            viewLeituraPanel.setListarLeiturasAbandonadasViewPanel();
+            cardLayout.show(cardPanel, "viewLeiturasCard");
         });
 
     }
@@ -209,19 +213,14 @@ public class MainFrame extends JFrame {
         layout.setAutoCreateContainerGaps(true);
 
         GroupLayout.SequentialGroup hGroup = layout.createSequentialGroup();
-        hGroup.addGroup(layout.createParallelGroup()
-                .addComponent(autorNameLabel).addComponent(autorBriefLabel));
-        hGroup.addGroup(layout.createParallelGroup()
-                .addComponent(authorNameField).addComponent(scrollPane).addComponent(addButton));
+        hGroup.addGroup(layout.createParallelGroup().addComponent(autorNameLabel).addComponent(autorBriefLabel));
+        hGroup.addGroup(layout.createParallelGroup().addComponent(authorNameField).addComponent(scrollPane).addComponent(addButton));
         layout.setHorizontalGroup(hGroup);
 
         GroupLayout.SequentialGroup vGroup = layout.createSequentialGroup();
-        vGroup.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                .addComponent(autorNameLabel).addComponent(authorNameField));
-        vGroup.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                .addComponent(autorBriefLabel).addComponent(scrollPane));
-        vGroup.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                .addComponent(addButton));
+        vGroup.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(autorNameLabel).addComponent(authorNameField));
+        vGroup.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(autorBriefLabel).addComponent(scrollPane));
+        vGroup.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(addButton));
         layout.setVerticalGroup(vGroup);
 
         cardPanel.add(autoresPanel, "createAutoresCard");
@@ -235,7 +234,14 @@ public class MainFrame extends JFrame {
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
         cardPanel.add(scrollPane, "readAutoresCard");
+
     }
+
+    private void setReadAnotacaoCard() {
+        JPanel anotacaoPainel = new AnotacaoPainel(usuario, anotacaoController, leituraController);
+        cardPanel.add(anotacaoPainel, "readAnotacaoCard");
+    }
+
 
     private void initComponents() {
         setMenu();

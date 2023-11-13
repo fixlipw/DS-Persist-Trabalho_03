@@ -1,13 +1,16 @@
 package com.ufc.dspersist.view;
 
+import com.ufc.dspersist.controller.UsuarioController;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import com.ufc.dspersist.controller.UsuarioController;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
+@Log4j2
 @Component
 public class LoginFrame extends JFrame {
 
@@ -24,18 +27,8 @@ public class LoginFrame extends JFrame {
     private UsuarioController usuarioController;
     private MainFrame mainFrame;
 
-    @Autowired
-    private void setUsuarioController(UsuarioController usuarioController) {
-        this.usuarioController = usuarioController;
-    }
-
-    @Autowired
-    public void setMainFrame(MainFrame mainFrame) {
-        this.mainFrame = mainFrame;
-    }
-
     public LoginFrame() {
-        super("Tela Inicial");
+        super("BookStand");
         setSize(new Dimension(500, 400));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -45,6 +38,16 @@ public class LoginFrame extends JFrame {
 
         setResizable(false);
         setVisible(true);
+    }
+
+    @Autowired
+    private void setUsuarioController(UsuarioController usuarioController) {
+        this.usuarioController = usuarioController;
+    }
+
+    @Autowired
+    public void setMainFrame(MainFrame mainFrame) {
+        this.mainFrame = mainFrame;
     }
 
     private void initComponents() {
@@ -78,6 +81,7 @@ public class LoginFrame extends JFrame {
 
         tabbedPane.addChangeListener(this::handleTabChange);
     }
+
     private void setLoginPanel() {
         GridBagConstraints gbc = new GridBagConstraints();
         setCredentialFields(loginPanel, gbc);
@@ -143,21 +147,31 @@ public class LoginFrame extends JFrame {
     }
 
     private void handleLoginButton(ActionEvent actionEvent) {
+        try {
+            var usuario = usuarioController.authUser(usernameField, passwordField);
 
-        var isLogged = usuarioController.authUser(usernameField, passwordField);
-
-        if (isLogged.isPresent()) {
-            mainFrame.setLoggedUsuario(isLogged.get());
-            this.dispose();
-            mainFrame.setVisible(true);
+            if (usuario != null) {
+                JOptionPane.showMessageDialog(null, "Bem-vindo(a) " + usuario.getUsername());
+                log.info("Info: Usuário autenticado com sucesso.");
+                mainFrame.setLoggedUsuario(usuario);
+                setVisible(false);
+                mainFrame.setVisible(true);
+            }
+        } catch (Exception e) {
+            log.error("Erro: {}", e.getMessage(), e);
+            JOptionPane.showMessageDialog(this, "Erro ao processar login. Tente novamente.");
         }
-
     }
 
     private void handleSignButton(ActionEvent actionEvent) {
-
-        usuarioController.createUser(usernameField, passwordField, confirmPasswordField);
-
+        try {
+            usuarioController.createUser(usernameField, passwordField, confirmPasswordField);
+            JOptionPane.showMessageDialog(this, "Cadastro realizado com sucesso!");
+            log.info("Info: Usuário cadastrado com sucesso.");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Erro ao processar cadastro. Tente novamente.");
+            log.error("Erro: {}", e.getMessage(), e);
+        }
     }
 
 }

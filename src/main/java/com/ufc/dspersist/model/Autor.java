@@ -22,7 +22,7 @@ public class Autor {
     private String authorName;
     private String brief;
 
-    @OneToMany(mappedBy = "autor")
+    @OneToMany(mappedBy = "autor", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Leitura> leituras;
 
 }

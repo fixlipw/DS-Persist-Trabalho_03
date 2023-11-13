@@ -2,18 +2,19 @@ package com.ufc.dspersist.view;
 
 import com.ufc.dspersist.controller.AutorController;
 import com.ufc.dspersist.model.Autor;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.util.List;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
+@Slf4j
 public class AutorPanel extends JPanel {
 
-    private AutorController autorController;
+    private final AutorController autorController;
 
     public AutorPanel(AutorController autorController) {
         this.autorController = autorController;
@@ -37,13 +38,11 @@ public class AutorPanel extends JPanel {
                 line = new JPanel(new FlowLayout(FlowLayout.LEFT));
                 line.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
             }
-
         }
 
         if (line.getComponentCount() > 0) {
             add(line);
         }
-
     }
 
     private JButton createAutorButton(Autor autor) {
@@ -51,10 +50,12 @@ public class AutorPanel extends JPanel {
         autorButton.setPreferredSize(new Dimension(150, 25));
         autorButton.setBorderPainted(false);
 
-        autorButton.addActionListener(new ActionListener() {
+        autorButton.addMouseListener(new MouseAdapter() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                showPopupMenu(autorButton, autor);
+            public void mouseClicked(MouseEvent e) {
+                if (e.getButton() == MouseEvent.BUTTON3) {
+                    showPopupMenu(autorButton, autor);
+                }
             }
         });
 
@@ -74,22 +75,26 @@ public class AutorPanel extends JPanel {
         JMenuItem update = new JMenuItem("Atualizar Descrição");
         JMenuItem delete = new JMenuItem("Deletar Autor");
 
-        update.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Lógica para atualizar descrição
+        update.addActionListener(e -> {
+            String newDescription = JOptionPane.showInputDialog("Insira a nova descrição:");
+            if (newDescription != null && !newDescription.isEmpty()) {
+                autorController.updateAutor(autor, newDescription);
+                JOptionPane.showMessageDialog(null, "Descrição atualizada com sucesso!");
+            } else {
+                JOptionPane.showMessageDialog(null, "A descrição não pode estar vazia. Tente novamente.");
             }
         });
 
-        delete.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int confirm = JOptionPane.showConfirmDialog(
-                        null, "Tem certeza que deseja deletar este autor?",
-                        "Confirmação", JOptionPane.YES_NO_OPTION);
+        delete.addActionListener(e -> {
+            int confirm = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja deletar este autor?", "Confirmação", JOptionPane.YES_NO_OPTION);
 
-                if (confirm == JOptionPane.YES_OPTION) {
-
+            if (confirm == JOptionPane.YES_OPTION) {
+                try {
+                    autorController.deleteAutor(autor);
+                    JOptionPane.showMessageDialog(null, "Autor deletado com sucesso!");
+                } catch (Exception exception) {
+                    JOptionPane.showMessageDialog(null, "Erro ao deletar autor. Consulte o log para mais informações.");
+                    log.error("Erro ao deletar autor: {}", exception.getMessage(), exception);
                 }
             }
         });

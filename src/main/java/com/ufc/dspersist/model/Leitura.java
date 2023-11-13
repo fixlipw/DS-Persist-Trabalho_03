@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+@NamedQueries({@NamedQuery(name = "Leitura.findLeiturasNaoLidasById", query = "select l FROM Leitura l where l.usuario.id = :usuarioId and l.status = 'NAO_LIDO'"), @NamedQuery(name = "Leitura.findLeiturasEmAndamentoById", query = "select l from Leitura l where l.usuario.id = :usuarioId and l.status = 'LENDO'")})
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -41,7 +43,7 @@ public class Leitura {
     @JoinColumn(name = "author_id")
     private Autor autor;
 
-    @OneToMany(mappedBy = "leitura")
+    @OneToMany(mappedBy = "leitura", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Anotacao> anotacoes;
 
     public Leitura(Integer id) {

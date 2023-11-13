@@ -1,11 +1,15 @@
 package com.ufc.dspersist.view;
 
+import at.favre.lib.crypto.bcrypt.BCrypt;
 import com.ufc.dspersist.controller.UsuarioController;
 import com.ufc.dspersist.model.Usuario;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 
+@Slf4j
 public class UsuarioPanel extends JPanel {
 
     private final Usuario usuario;
@@ -63,33 +67,104 @@ public class UsuarioPanel extends JPanel {
         gbc.gridy = 3;
         add(anotacoesLabel, gbc);
 
-        int quantidadeAnotacoes = 0; // Update this logic to get the actual number of annotations
+        int quantidadeAnotacoes = usuarioController.countAnotacoesById(usuario);
         JLabel anotacoesCountLabel = new JLabel(String.valueOf(quantidadeAnotacoes));
         gbc.gridx = 1;
         gbc.gridy = 3;
         add(anotacoesCountLabel, gbc);
 
         JButton changePasswordButton = new JButton("Alterar Senha");
+        changePasswordButton.addActionListener(this::handleChangePasswordButton);
         gbc.gridx = 0;
         gbc.gridy = 4;
         add(changePasswordButton, gbc);
 
         JButton editProfileButton = new JButton("Alterar Nome de Usuário");
+        editProfileButton.addActionListener(this::handleEditProfileButton);
         gbc.gridx = 1;
         gbc.gridy = 4;
         add(editProfileButton, gbc);
 
-        JButton deleteProfileButton = new JButton("Apagar Usuário");
-        gbc.gridx = 0;
-        gbc.gridy = 5;
-        gbc.gridwidth = 2;
-        add(deleteProfileButton, gbc);
-
-        JButton logoutButton = new JButton("Sair");
-        gbc.gridx = 0;
-        gbc.gridy = 6;
-        add(logoutButton, gbc);
-
     }
 
+    void handleChangePasswordButton(ActionEvent e) {
+        JPasswordField passwordField = new JPasswordField();
+        JPasswordField newPasswordField = new JPasswordField();
+        Object[] message = {"Confirme sua senha:", passwordField};
+        int option = JOptionPane.showConfirmDialog(this, message, "Alterar Senha", JOptionPane.OK_CANCEL_OPTION);
+
+        if (option == JOptionPane.OK_OPTION) {
+
+            BCrypt.Result result = null;
+            try {
+                String hashpsw = usuario.getPassword();
+                result = BCrypt.verifyer().verify(passwordField.getPassword(), hashpsw);
+            } catch (Exception exception) {
+                JOptionPane.showMessageDialog(null, "Caixa de texto vazia. Tente novamente.");
+                log.error("Erro: {}", exception.getMessage(), exception);
+                return;
+            }
+
+            if (!result.verified) {
+                JOptionPane.showMessageDialog(null, "Senha incorreta. Tente novamente.");
+                log.error("Erro: {}", "Senha incorreta. Tente novamente");
+                return;
+            }
+
+            newPasswordField = new JPasswordField();
+            message = new Object[]{"Insira sua nova senha:", newPasswordField};
+
+            option = JOptionPane.showConfirmDialog(this, message, "Alterar Senha", JOptionPane.OK_CANCEL_OPTION);
+
+            if (option == JOptionPane.OK_OPTION) {
+
+                try {
+                    String hashpsw = BCrypt.withDefaults().hashToString(12, newPasswordField.getPassword());
+                    usuario.setPassword(hashpsw);
+                    usuarioController.saveUser(usuario);
+                    JOptionPane.showMessageDialog(null, "Senha alterada com sucesso!");
+                    log.info("Info: Usuário alterou a senha com sucesso");
+                } catch (Exception exception) {
+                    JOptionPane.showMessageDialog(null, "Erro ao alterar sua senha. Reporte este erro e tente novamente.");
+                    log.error("Erro: {}", exception.getMessage(), exception);
+                }
+            }
+        }
+    }
+
+    void handleEditProfileButton(ActionEvent e) {
+        JPasswordField passwordField = new JPasswordField();
+        Object[] message = {"Confirme sua senha:", passwordField};
+        int option = JOptionPane.showConfirmDialog(this, message, "Confirmar Senha", JOptionPane.OK_CANCEL_OPTION);
+
+        if (option == JOptionPane.OK_OPTION) {
+            BCrypt.Result result;
+            try {
+                String hashpsw = usuario.getPassword();
+                result = BCrypt.verifyer().verify(passwordField.getPassword(), hashpsw);
+            } catch (Exception exception) {
+                JOptionPane.showMessageDialog(null, "Caixa de texto vazia. Tente novamente.");
+                log.error("Erro: {}", exception.getMessage(), exception);
+                return;
+            }
+
+            if (!result.verified) {
+                JOptionPane.showMessageDialog(null, "Senha incorreta. Tente novamente.");
+                log.error("Erro: {}", "Senha incorreta. Tente novamente");
+                return;
+            }
+
+            String newUsername = JOptionPane.showInputDialog(this, "Insira o novo nome de usuário:");
+
+            if (newUsername != null && !newUsername.isEmpty()) {
+                usuario.setUsername(newUsername);
+                usuarioController.saveUser(usuario);
+                JOptionPane.showMessageDialog(null, "Nome de usuário alterado com sucesso!");
+                log.info("Info: Nome de usuário alterado com sucesso");
+            } else {
+                JOptionPane.showMessageDialog(null, "Nome de usuário não pode ser vazio. Tente novamente.");
+                log.error("Erro: Nome de usuário não pode ser vazio");
+            }
+        }
+    }
 }

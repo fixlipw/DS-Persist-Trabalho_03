@@ -5,10 +5,7 @@ import lombok.Getter;
 @Getter
 public enum BookStatus {
 
-    NAO_LIDO("Não Lido"),
-    LENDO("Lendo"),
-    LIDO("Lido"),
-    ABANDONADO("Abandonado");
+    NAO_LIDO("Não Lido"), LENDO("Lendo"), LIDO("Lido"), ABANDONADO("Abandonado");
 
     private final String status;
 

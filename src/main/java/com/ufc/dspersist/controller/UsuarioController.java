@@ -7,77 +7,97 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.swing.*;
-import java.util.Optional;
 
 @Component
 public class UsuarioController {
 
-    private final UsuarioDAO usuarioDAO;
+    private final UsuarioDAO usuarioRepository;
     private final LeituraController leituraController;
+    private final AnotacaoController anotacaoController;
 
-    private Optional<Usuario> user;
-
-
+    private Usuario user;
 
     @Autowired
-    public UsuarioController(UsuarioDAO usuarioDAO, LeituraController leituraController) {
-        this.usuarioDAO = usuarioDAO;
+    public UsuarioController(UsuarioDAO usuarioRepository, LeituraController leituraController, AnotacaoController anotacaoController) {
+        this.usuarioRepository = usuarioRepository;
         this.leituraController = leituraController;
+        this.anotacaoController = anotacaoController;
     }
-
 
     public void createUser(JTextField usrnField, JPasswordField pswField, JPasswordField cpswField) {
 
-        user = Optional.of(new Usuario());
 
         String username = usrnField.getText();
-        String hashpsw = BCrypt.withDefaults().hashToString(12, cpswField.getPassword());
 
-        user.get().setUsername(username);
-        user.get().setPassword(hashpsw);
+        if (username.length() < 2) {
+            throw new IllegalArgumentException("O nome do usuário deve ser maior que 2. Tente novamente.");
+        } else if (pswField.getPassword().length < 8) {
+            throw new IllegalArgumentException("A senha do usuário deve ser maior que 8. Tente novamente.");
+        }
+
+        String hashpsw = BCrypt.withDefaults().hashToString(12, cpswField.getPassword());
 
         BCrypt.Result result = BCrypt.verifyer().verify(pswField.getPassword(), hashpsw);
 
-        if (result.verified) {
-            usuarioDAO.save(user.get());
+        if (!result.verified) {
+            JOptionPane.showMessageDialog(null, "As senhas não coincidem. Tente novamente.");
+            return;
         }
+
+        user = new Usuario();
+        user.setUsername(username);
+        user.setPassword(hashpsw);
+        usuarioRepository.save(user);
 
     }
 
-    public Optional<Usuario> authUser(JTextField usrnField, JPasswordField pswField) {
+    public Usuario authUser(JTextField usrnField, JPasswordField pswField) {
 
         String username = usrnField.getText();
 
-        user = Optional.ofNullable(usuarioDAO.findUsuarioByUsernameIs(username));
+        user = usuarioRepository.findUsuarioByUsername(username);
 
-        BCrypt.Result result = null;
+        BCrypt.Result result;
 
-        if (user.isPresent()) {
-            result = BCrypt.verifyer().verify(pswField.getPassword(), user.get().getPassword());
+        if (user != null) {
+            result = BCrypt.verifyer().verify(pswField.getPassword(), user.getPassword());
+
+            if (result.verified) {
+                return user;
+            }
+
         }
 
-        if (result != null && result.verified) {
-            JOptionPane.showMessageDialog(null, "Login Bem-Sucedido!");
-            return user;
-        }
-
-        JOptionPane.showMessageDialog(null, "Login Mal-Sucedido... Verifique suas credenciais e tente novamente.");
-        return Optional.empty();
+        throw new NullPointerException("Usuário ou senha inválidos");
 
     }
 
     public Usuario getUsuario(int id) {
 
-        if (user.isPresent() && user.get().getId() == id) {
-            return user.get();
+        if (user != null && user.getId() == id) {
+            return user;
+        } else {
+            return usuarioRepository.findByIdNamedQuery(id);
         }
 
-        return usuarioDAO.findById(id);
 
     }
 
     public int countLeiturasById(Usuario usuario) {
         return leituraController.getLeiturasQtd(usuario);
+    }
+
+    public int countAnotacoesById(Usuario usuario) {
+        return anotacaoController.countAllAnnotationByUserId(usuario);
+    }
+
+    public void saveUser(Usuario usuario) {
+
+        if (usuario.getUsername().length() < 2) {
+            throw new IllegalArgumentException("O nome do usuário deve ser maior que 2. Tente novamente.");
+        }
+
+        usuarioRepository.save(usuario);
     }
 
 }

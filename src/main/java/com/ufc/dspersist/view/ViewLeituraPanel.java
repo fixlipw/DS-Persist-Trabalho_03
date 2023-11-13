@@ -2,16 +2,18 @@ package com.ufc.dspersist.view;
 
 import com.ufc.dspersist.controller.AnotacaoController;
 import com.ufc.dspersist.controller.LeituraController;
+import com.ufc.dspersist.model.Anotacao;
 import com.ufc.dspersist.model.Leitura;
 import com.ufc.dspersist.model.Usuario;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 public class ViewLeituraPanel extends JPanel {
 
     private final Usuario usuario;
@@ -36,7 +38,7 @@ public class ViewLeituraPanel extends JPanel {
         for (Leitura leitura : leituras) {
             JButton leituraButton = new JButton(leitura.getTitle());
             leituraButton.setBorderPainted(false);
-            leituraButton.setPreferredSize(new Dimension(150,75));
+            leituraButton.setPreferredSize(new Dimension(150, 75));
 
             leituraButton.addMouseListener(new MouseAdapter() {
                 @Override
@@ -49,15 +51,20 @@ public class ViewLeituraPanel extends JPanel {
 
                         annotate.addActionListener(actionListener -> {
                             String annotation = JOptionPane.showInputDialog("Digite sua anotação:");
-                            anotacaoController.saveAnotacao(leitura, annotation);
+                            anotacaoController.saveAnotacao(new Anotacao(), leitura, annotation);
                         });
                         delete.addActionListener(actionListener -> {
-                            int confirm = JOptionPane.showConfirmDialog(
-                                    null, "Tem certeza que deseja deletar a leitura: \"" + leitura.getTitle() + "\"",
-                                    "Confirmação", JOptionPane.YES_NO_OPTION);
+                            int confirm = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja deletar a leitura: \"" + leitura.getTitle() + "\"", "Confirmação", JOptionPane.YES_NO_OPTION);
 
                             if (confirm == JOptionPane.YES_OPTION) {
-
+                                try {
+                                    leituraController.deleteLeitura(leitura);
+                                    JOptionPane.showMessageDialog(null, "Leitura excluída com sucesso!");
+                                    log.info("Info: Leitura " + leitura.getTitle() + " excluída com sucesso.");
+                                } catch (Exception exception) {
+                                    JOptionPane.showMessageDialog(null, "Erro ao excluir leitura. Consulte o log para mais informações.");
+                                    log.error("Erro ao excluir leitura: {}", exception.getMessage(), exception);
+                                }
                             }
                         });
                         popupMenu.add(annotate);
@@ -70,12 +77,7 @@ public class ViewLeituraPanel extends JPanel {
             leituraButton.addMouseMotionListener(new MouseAdapter() {
                 @Override
                 public void mouseMoved(MouseEvent e) {
-                    leituraButton.setToolTipText("<html>" + leitura.getTitle() +
-                            "<br><b>ID:</b> " + leitura.getId() +
-                            "<br><b>Autor:</b> " + leitura.getAuthorname() +
-                            "<br><b>Páginas:</b> " + leitura.getPagesQtd() +
-                            "<br><b>Tipo:</b> " + leitura.getType().getType() +
-                            "<br><b>Status:</b> " + leitura.getStatus().getStatus() + "</html>");
+                    leituraButton.setToolTipText("<html>" + leitura.getTitle() + "<br><b>ID:</b> " + leitura.getId() + "<br><b>Autor:</b> " + leitura.getAuthorname() + "<br><b>Páginas:</b> " + leitura.getPagesQtd() + "<br><b>Tipo:</b> " + leitura.getType().getType() + "<br><b>Status:</b> " + leitura.getStatus().getStatus() + "</html>");
                 }
             });
 
@@ -105,7 +107,9 @@ public class ViewLeituraPanel extends JPanel {
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
         viewLeiturasCard.add(label, BorderLayout.NORTH);
-        setShowPanelButtons(scrollPane, leituraController.getAllLeiturasById(usuario));
+        List<Leitura> leituras = leituraController.getAllLeiturasById(usuario);
+        log.info("Leituras: {}", leituras);
+        setShowPanelButtons(scrollPane, leituras);
         viewLeiturasCard.add(scrollPane, BorderLayout.CENTER);
 
         cardPanel.add(viewLeiturasCard, "viewLeiturasCard");
@@ -120,9 +124,11 @@ public class ViewLeituraPanel extends JPanel {
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
         viewLeiturasCard.add(label, BorderLayout.NORTH);
-        setShowPanelButtons(scrollPane, new ArrayList<>());
-
+        List<Leitura> leiturasAndamento = leituraController.getLeiturasEmAndamentoById(usuario);
+        log.info("Leituras em andamento: {}", leiturasAndamento);
+        setShowPanelButtons(scrollPane, leiturasAndamento);
         viewLeiturasCard.add(scrollPane, BorderLayout.CENTER);
+
         cardPanel.add(viewLeiturasCard, "viewLeiturasCard");
     }
 
@@ -135,47 +141,47 @@ public class ViewLeituraPanel extends JPanel {
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
         viewLeiturasCard.add(label, BorderLayout.NORTH);
-        setShowPanelButtons(scrollPane, new ArrayList<>());
-
+        List<Leitura> leiturasConcluidas = leituraController.getLeiturasConcluidasById(usuario);
+        log.info("Leituras concluídas: {}", leiturasConcluidas);
+        setShowPanelButtons(scrollPane, leiturasConcluidas);
         viewLeiturasCard.add(scrollPane, BorderLayout.CENTER);
+
         cardPanel.add(viewLeiturasCard, "viewLeiturasCard");
     }
 
-
-    public void setListarLeiturasAutorViewPanel() {
+    public void setListarLeiturasNaoLidasViewPanel() {
         JPanel viewLeiturasCard = new JPanel(new BorderLayout());
-        JLabel label = new JLabel("Listagem de Leituras por Autor");
+        JLabel label = new JLabel("Listagem de Leituras não Lidas");
         label.setHorizontalAlignment(SwingConstants.CENTER);
-
-        String authorName = JOptionPane.showInputDialog(this, "Insira o nome do autor:");
 
         JScrollPane scrollPane = new JScrollPane();
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
         viewLeiturasCard.add(label, BorderLayout.NORTH);
-        setShowPanelButtons(scrollPane, new ArrayList<>());
-
+        List<Leitura> leiturasNaoLidas = leituraController.getLeiturasNaoLidasById(usuario);
+        log.info("Leituras não lidas: {}", leiturasNaoLidas);
+        setShowPanelButtons(scrollPane, leiturasNaoLidas);
         viewLeiturasCard.add(scrollPane, BorderLayout.CENTER);
+
         cardPanel.add(viewLeiturasCard, "viewLeiturasCard");
     }
 
-    public void setListarLeiturasTituloViewPanel() {
+    public void setListarLeiturasAbandonadasViewPanel() {
         JPanel viewLeiturasCard = new JPanel(new BorderLayout());
-        JLabel label = new JLabel("Listagem de Leituras por Título");
+        JLabel label = new JLabel("Listagem de Leituras Abandonadas");
         label.setHorizontalAlignment(SwingConstants.CENTER);
-
-        String titulo = JOptionPane.showInputDialog(this, "Insira o título da leitura:");
 
         JScrollPane scrollPane = new JScrollPane();
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
         viewLeiturasCard.add(label, BorderLayout.NORTH);
-        setShowPanelButtons(scrollPane, new ArrayList<>());
-
+        List<Leitura> leiturasAbandonadas = leituraController.getLeiturasAbandonadasById(usuario);
+        log.info("Leituras abandonadas: {}", leiturasAbandonadas);
+        setShowPanelButtons(scrollPane, leiturasAbandonadas);
         viewLeiturasCard.add(scrollPane, BorderLayout.CENTER);
+
         cardPanel.add(viewLeiturasCard, "viewLeiturasCard");
     }
-
 
 
 }

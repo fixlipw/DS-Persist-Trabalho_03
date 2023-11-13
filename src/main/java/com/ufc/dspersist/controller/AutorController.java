@@ -33,8 +33,8 @@ public class AutorController {
         autorRepository.delete(autor);
     }
 
-    public void updateAutor(Autor autor) {
-
+    public void updateAutor(Autor autor, String newBrief) {
+        autor.setBrief(newBrief);
+        autorRepository.save(autor);
     }
-
 }

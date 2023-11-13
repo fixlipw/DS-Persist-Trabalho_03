@@ -5,18 +5,7 @@ import lombok.Getter;
 @Getter
 public enum BookType {
 
-    LIVRO("Livro"),
-    EBOOK("Ebook"),
-    PDF("PDF"),
-    ARTIGO("Artigo"),
-    REVISTA("Revista"),
-    JORNAL("Jornal"),
-    AUDIOBOOK("Audiobook"),
-    QUADRINHO("Quadrinho"),
-    BLOG("Blog"),
-    RELATORIO("Relatório"),
-    TCC("TCC"),
-    DIARIO("Diário");
+    LIVRO("Livro"), EBOOK("Ebook"), PDF("PDF"), ARTIGO("Artigo"), REVISTA("Revista"), JORNAL("Jornal"), AUDIOBOOK("Audiobook"), QUADRINHO("Quadrinho"), BLOG("Blog"), RELATORIO("Relatório"), TCC("TCC"), DIARIO("Diário");
 
     private final String type;
 

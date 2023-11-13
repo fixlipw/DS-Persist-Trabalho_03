@@ -26,9 +26,10 @@ public class LeituraController {
 
         try {
             return usuario.getLeituras().size();
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
 
-        return leituraRepository.countLeituraById(usuario.getId());
+        return leituraRepository.countLeituraByUsuarioId(usuario.getId());
 
     }
 
@@ -58,7 +59,30 @@ public class LeituraController {
     }
 
     public List<Leitura> getAllLeiturasById(Usuario user) {
-        return leituraRepository.getLeiturasByUsuarioId(user.getId());
+        return leituraRepository.findLeiturasByUsuarioId(user.getId());
     }
 
+    public void saveLeitura(Leitura leitura) {
+        leituraRepository.save(leitura);
+    }
+
+    public void deleteLeitura(Leitura leitura) {
+        leituraRepository.delete(leitura);
+    }
+
+    public List<Leitura> getLeiturasNaoLidasById(Usuario usuario) {
+        return leituraRepository.findLeiturasNaoLidasById(usuario.getId());
+    }
+
+    public List<Leitura> getLeiturasAbandonadasById(Usuario usuario) {
+        return leituraRepository.findLeiturasAbandonadasById(usuario.getId());
+    }
+
+    public List<Leitura> getLeiturasEmAndamentoById(Usuario usuario) {
+        return leituraRepository.findLeiturasEmAndamentoById(usuario.getId());
+    }
+
+    public List<Leitura> getLeiturasConcluidasById(Usuario usuario) {
+        return leituraRepository.findLeiturasConcluidasById(usuario.getId());
+    }
 }

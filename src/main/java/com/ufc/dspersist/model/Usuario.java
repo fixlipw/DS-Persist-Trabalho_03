@@ -4,9 +4,10 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 import java.util.List;
+
+@NamedQuery(name = "Usuario.findByIdNamedQuery", query = "select u from Usuario u where u.id = :id")
 
 @Data
 @NoArgsConstructor

@@ -20,21 +20,21 @@ public class Main implements CommandLineRunner {
 
     private LoginFrame loginFrame;
 
-    @Autowired
-    public void setLoginFrame(LoginFrame loginFrame) {
-        this.loginFrame = loginFrame;
-    }
-
     public static void main(String[] args) {
         FlatIntelliJLaf.setup();
-        UIManager.put( "Button.arc", 20);
-        UIManager.put( "Component.arc", 20);
-        UIManager.put( "ProgressBar.arc", 20);
-        UIManager.put( "TextComponent.arc", 20);
+        UIManager.put("Button.arc", 20);
+        UIManager.put("Component.arc", 20);
+        UIManager.put("ProgressBar.arc", 20);
+        UIManager.put("TextComponent.arc", 20);
         SwingUtilities.invokeLater(() -> {
             SpringApplicationBuilder builder = new SpringApplicationBuilder(Main.class);
             builder.headless(false).run(args);
         });
+    }
+
+    @Autowired
+    public void setLoginFrame(LoginFrame loginFrame) {
+        this.loginFrame = loginFrame;
     }
 
     @Override
