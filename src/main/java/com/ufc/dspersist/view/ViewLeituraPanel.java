@@ -56,7 +56,7 @@ public class ViewLeituraPanel extends JPanel {
                                 JOptionPane.showMessageDialog(null, "Anotação adicionada com sucesso.");
                                 log.info("Info: Anotação adicionada com sucesso.");
                             } catch (Exception exception) {
-                                JOptionPane.showMessageDialog(null, "Erro ao excluir leitura. Tente novamente.");
+                                JOptionPane.showMessageDialog(null, "Erro ao adicionar anotação. Tente Novamente.");
                                     log.error("Erro: {}", exception.getMessage(), exception);
                             }
                         });
