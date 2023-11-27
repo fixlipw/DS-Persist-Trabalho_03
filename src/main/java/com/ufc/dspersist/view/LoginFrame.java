@@ -24,30 +24,24 @@ public class LoginFrame extends JFrame {
     private JButton loginButton;
     private JButton signButton;
 
-    private UsuarioController usuarioController;
-    private MainFrame mainFrame;
+    private final UsuarioController usuarioController;
+    private final MainFrame mainFrame;
 
-    public LoginFrame() {
+    @Autowired
+    public LoginFrame(MainFrame mainFrame, UsuarioController usuarioController) {
         super("BookStand");
         setSize(new Dimension(500, 400));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
+
+        this.mainFrame = mainFrame;
+        this.usuarioController = usuarioController;
 
         initComponents();
         setTabbedPane();
 
         setResizable(false);
         setVisible(true);
-    }
-
-    @Autowired
-    private void setUsuarioController(UsuarioController usuarioController) {
-        this.usuarioController = usuarioController;
-    }
-
-    @Autowired
-    public void setMainFrame(MainFrame mainFrame) {
-        this.mainFrame = mainFrame;
     }
 
     private void initComponents() {

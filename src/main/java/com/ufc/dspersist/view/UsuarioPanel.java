@@ -4,22 +4,41 @@ import at.favre.lib.crypto.bcrypt.BCrypt;
 import com.ufc.dspersist.controller.UsuarioController;
 import com.ufc.dspersist.model.Usuario;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
 @Slf4j
+@Component
 public class UsuarioPanel extends JPanel {
 
-    private final Usuario usuario;
+    private Usuario usuario;
+    private JTextField idField;
+    private JTextField usernameField;
+    private JLabel leiturasCountLabel;
+    private JLabel anotacoesCountLabel;
+    private int quantidadeLeituras = 0;
+    private int quantidadeAnotacoes = 0;
 
     private final UsuarioController usuarioController;
 
-    public UsuarioPanel(Usuario usuario, UsuarioController usuarioController) {
-        this.usuario = usuario;
+    @Autowired
+    public UsuarioPanel (UsuarioController usuarioController) {
         this.usuarioController = usuarioController;
         initComponents();
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+        idField.setText(usuario.getId().toString());
+        usernameField.setText(usuario.getUsername());
+        quantidadeLeituras = usuarioController.countLeiturasById(usuario);
+        quantidadeAnotacoes = usuarioController.countAnotacoesById(usuario);
+        leiturasCountLabel.setText(Integer.toString(quantidadeLeituras));
+        anotacoesCountLabel.setText(Integer.toString(quantidadeAnotacoes));
     }
 
     private void initComponents() {
@@ -34,7 +53,7 @@ public class UsuarioPanel extends JPanel {
         gbc.gridy = 0;
         add(idLabel, gbc);
 
-        JTextField idField = new JTextField(usuario.getId().toString());
+        idField = new JTextField("");
         idField.setEditable(false);
         gbc.gridx = 1;
         gbc.gridy = 0;
@@ -45,7 +64,7 @@ public class UsuarioPanel extends JPanel {
         gbc.gridy = 1;
         add(usernameLabel, gbc);
 
-        JTextField usernameField = new JTextField(usuario.getUsername());
+        usernameField = new JTextField("");
         usernameField.setEditable(false);
         gbc.gridx = 1;
         gbc.gridy = 1;
@@ -56,8 +75,7 @@ public class UsuarioPanel extends JPanel {
         gbc.gridy = 2;
         add(leiturasLabel, gbc);
 
-        int quantidadeLeituras = usuarioController.countLeiturasById(usuario);
-        JLabel leiturasCountLabel = new JLabel(String.valueOf(quantidadeLeituras));
+        leiturasCountLabel = new JLabel(String.valueOf(quantidadeLeituras));
         gbc.gridx = 1;
         gbc.gridy = 2;
         add(leiturasCountLabel, gbc);
@@ -67,8 +85,7 @@ public class UsuarioPanel extends JPanel {
         gbc.gridy = 3;
         add(anotacoesLabel, gbc);
 
-        int quantidadeAnotacoes = usuarioController.countAnotacoesById(usuario);
-        JLabel anotacoesCountLabel = new JLabel(String.valueOf(quantidadeAnotacoes));
+        anotacoesCountLabel = new JLabel(String.valueOf(quantidadeAnotacoes));
         gbc.gridx = 1;
         gbc.gridy = 3;
         add(anotacoesCountLabel, gbc);
@@ -87,15 +104,16 @@ public class UsuarioPanel extends JPanel {
 
     }
 
+
     void handleChangePasswordButton(ActionEvent e) {
         JPasswordField passwordField = new JPasswordField();
-        JPasswordField newPasswordField = new JPasswordField();
+        JPasswordField newPasswordField;
         Object[] message = {"Confirme sua senha:", passwordField};
         int option = JOptionPane.showConfirmDialog(this, message, "Alterar Senha", JOptionPane.OK_CANCEL_OPTION);
 
         if (option == JOptionPane.OK_OPTION) {
 
-            BCrypt.Result result = null;
+            BCrypt.Result result;
             try {
                 String hashpsw = usuario.getPassword();
                 result = BCrypt.verifyer().verify(passwordField.getPassword(), hashpsw);

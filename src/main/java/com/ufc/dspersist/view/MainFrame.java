@@ -3,7 +3,6 @@ package com.ufc.dspersist.view;
 import com.ufc.dspersist.controller.AnotacaoController;
 import com.ufc.dspersist.controller.AutorController;
 import com.ufc.dspersist.controller.LeituraController;
-import com.ufc.dspersist.controller.UsuarioController;
 import com.ufc.dspersist.model.Usuario;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +17,6 @@ public class MainFrame extends JFrame {
 
     private Usuario usuario;
     private JPanel cardPanel;
-    private JPanel usuarioInfoPanel;
-    private JPanel autoresPanel;
-    private JPanel formLeituraPanel;
-    private ViewLeituraPanel viewLeituraPanel;
     private CardLayout cardLayout;
 
     private JMenuItem createLeituraMenuItem;
@@ -30,18 +25,33 @@ public class MainFrame extends JFrame {
     private JMenuItem listarConcluidasItem;
     private JMenuItem listarNaoLidoItem;
     private JMenuItem listarAbandonadoItem;
-
     private JMenuItem updateLeituraMenuItem;
-
     private JMenuItem usuarioMenuItem;
     private JMenuItem readAnotacaoMenuItem;
     private JMenuItem createAutorMenuItem;
     private JMenuItem readAutorMenuItem;
 
-    private UsuarioController usuarioController;
     private LeituraController leituraController;
     private AutorController autorController;
     private AnotacaoController anotacaoController;
+
+    private UsuarioPanel usuarioPanel;
+    private LeituraPanel leituraPanel;
+    private AutorPanel autorPanel;
+    private AnotacaoPainel anotacaoPanel;
+
+    @Autowired
+    private void setControllers(LeituraController leituraController, AutorController autorController, AnotacaoController anotacaoController) {
+        this.leituraController = leituraController;
+        this.autorController = autorController;
+        this.anotacaoController = anotacaoController;
+    }
+
+    @Autowired
+    private void setPanels(UsuarioPanel usuarioPanel, LeituraPanel leituraPanel) {
+        this.usuarioPanel = usuarioPanel;
+        this.leituraPanel = leituraPanel;
+    }
 
     public MainFrame() {
         super("Tela inicial");
@@ -55,25 +65,6 @@ public class MainFrame extends JFrame {
         setVisible(false);
     }
 
-    @Autowired
-    private void setUsuarioController(UsuarioController usuarioController) {
-        this.usuarioController = usuarioController;
-    }
-
-    @Autowired
-    private void setLeituraController(LeituraController leituraController) {
-        this.leituraController = leituraController;
-    }
-
-    @Autowired
-    public void setAutorController(AutorController autorController) {
-        this.autorController = autorController;
-    }
-
-    @Autowired
-    private void setAnotacaoController(AnotacaoController anotacaoController) {
-        this.anotacaoController = anotacaoController;
-    }
 
     public void setLoggedUsuario(Usuario usuario) {
         this.usuario = usuario;
@@ -133,33 +124,33 @@ public class MainFrame extends JFrame {
         cardPanel.add(anotacoesCard, "anotacoesCard");
 
         usuarioMenuItem.addActionListener(e -> {
-            usuarioInfoPanel = new UsuarioPanel(usuario, usuarioController);
-            cardPanel.add(usuarioInfoPanel, "usuarioInfoPanel");
+            usuarioPanel.setUsuario(usuario);
+            cardPanel.add(usuarioPanel, "usuarioInfoPanel");
             cardLayout.show(cardPanel, "usuarioInfoPanel");
         });
         createLeituraMenuItem.addActionListener(e -> {
-            formLeituraPanel = new CreateLeituraPanel(usuario, leituraController, autorController);
-            cardPanel.add(formLeituraPanel, "createLeituraCard");
+            leituraPanel.setCardPanel(cardPanel);
+            leituraPanel.setCreateLeiturasPanel();
             cardLayout.show(cardPanel, "createLeituraCard");
         });
         updateLeituraMenuItem.addActionListener(e -> {
-            formLeituraPanel = new UpdateLeituraPanel(usuario, leituraController, autorController);
-            cardPanel.add(formLeituraPanel, "updateLeituraCard");
+            leituraPanel.setCardPanel(cardPanel);
+            leituraPanel.setUpdateLeituraPanel();
             cardLayout.show(cardPanel, "updateLeituraCard");
         });
         listarTodasLeiturasItem.addActionListener(e -> {
-            viewLeituraPanel = new ViewLeituraPanel(cardPanel, usuario, leituraController, anotacaoController);
-            viewLeituraPanel.setListarTodasLeiturasViewPanel();
+            leituraPanel.setCardPanel(cardPanel);
+            leituraPanel.setListarTodasLeiturasViewPanel();
             cardLayout.show(cardPanel, "viewLeiturasCard");
         });
         listarEmAndamentoItem.addActionListener(e -> {
-            viewLeituraPanel = new ViewLeituraPanel(cardPanel, usuario, leituraController, anotacaoController);
-            viewLeituraPanel.setListarLeiturasAndamentoViewPanel();
+            leituraPanel.setCardPanel(cardPanel);
+            leituraPanel.setListarLeiturasAndamentoViewPanel();
             cardLayout.show(cardPanel, "viewLeiturasCard");
         });
         listarConcluidasItem.addActionListener(e -> {
-            viewLeituraPanel = new ViewLeituraPanel(cardPanel, usuario, leituraController, anotacaoController);
-            viewLeituraPanel.setListarLeiturasConcluidasViewPanel();
+            leituraPanel.setCardPanel(cardPanel);
+            leituraPanel.setListarLeiturasConcluidasViewPanel();
             cardLayout.show(cardPanel, "viewLeiturasCard");
         });
         createAutorMenuItem.addActionListener(e -> {
@@ -175,20 +166,20 @@ public class MainFrame extends JFrame {
             cardLayout.show(cardPanel, "readAnotacaoCard");
         });
         listarNaoLidoItem.addActionListener(e -> {
-            viewLeituraPanel = new ViewLeituraPanel(cardPanel, usuario, leituraController, anotacaoController);
-            viewLeituraPanel.setListarLeiturasNaoLidasViewPanel();
+            leituraPanel.setCardPanel(cardPanel);
+            leituraPanel.setListarLeiturasNaoLidasViewPanel();
             cardLayout.show(cardPanel, "viewLeiturasCard");
         });
         listarAbandonadoItem.addActionListener(e -> {
-            viewLeituraPanel = new ViewLeituraPanel(cardPanel, usuario, leituraController, anotacaoController);
-            viewLeituraPanel.setListarLeiturasAbandonadasViewPanel();
+            leituraPanel.setCardPanel(cardPanel);
+            leituraPanel.setListarLeiturasAbandonadasViewPanel();
             cardLayout.show(cardPanel, "viewLeiturasCard");
         });
 
     }
 
     private void setCreateAutoresCard() {
-        autoresPanel = new JPanel();
+        JPanel autoresPanel = new JPanel();
 
         JLabel autorNameLabel = new JLabel("Nome do Autor:");
         JLabel autorBriefLabel = new JLabel("Breve Descrição:");
@@ -235,22 +226,15 @@ public class MainFrame extends JFrame {
         cardPanel.add(autoresPanel, "createAutoresCard");
     }
 
-
     private void setReadAutoresCard() {
-        autoresPanel = new AutorPanel(autorController);
-
-        JScrollPane scrollPane = new JScrollPane(autoresPanel);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-
-        cardPanel.add(scrollPane, "readAutoresCard");
-
+        autorPanel = new AutorPanel(autorController);
+        cardPanel.add(autorPanel, "readAutoresCard");
     }
 
     private void setReadAnotacaoCard() {
-        JPanel anotacaoPainel = new AnotacaoPainel(usuario, anotacaoController, leituraController);
-        cardPanel.add(anotacaoPainel, "readAnotacaoCard");
+        anotacaoPanel = new AnotacaoPainel(anotacaoController, leituraController);
+        cardPanel.add(anotacaoPanel, "readAnotacaoCard");
     }
-
 
     private void initComponents() {
         setMenu();

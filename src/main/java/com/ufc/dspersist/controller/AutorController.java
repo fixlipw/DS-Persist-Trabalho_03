@@ -1,7 +1,7 @@
 package com.ufc.dspersist.controller;
 
 import com.ufc.dspersist.model.Autor;
-import com.ufc.dspersist.repository.AutorDAO;
+import com.ufc.dspersist.service.AutorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -10,31 +10,31 @@ import java.util.List;
 @Component
 public class AutorController {
 
-    private AutorDAO autorRepository;
+    private AutorService autorService;
 
     @Autowired
-    public void setAutorDAO(AutorDAO autorDao) {
-        this.autorRepository = autorDao;
+    public void setAutorService(AutorService autorService) {
+        this.autorService = autorService;
     }
 
     public List<Autor> getAllAuthors() {
-        return autorRepository.findAll();
+        return autorService.getAllAuthors();
     }
 
     public void saveAutor(String autorName, String brief) {
         Autor autor = new Autor();
         autor.setAuthorName(autorName);
         autor.setBrief(brief);
-        autorRepository.save(autor);
+        autorService.saveAutor(autor);
 
     }
 
     public void deleteAutor(Autor autor) {
-        autorRepository.delete(autor);
+        autorService.deleteAutor(autor);
     }
 
     public void updateAutor(Autor autor, String newBrief) {
         autor.setBrief(newBrief);
-        autorRepository.save(autor);
+        autorService.saveAutor(autor);
     }
 }

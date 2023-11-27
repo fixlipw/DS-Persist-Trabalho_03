@@ -6,6 +6,8 @@ import com.ufc.dspersist.model.Anotacao;
 import com.ufc.dspersist.model.Leitura;
 import com.ufc.dspersist.model.Usuario;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,17 +16,22 @@ import java.awt.event.MouseEvent;
 import java.util.List;
 
 @Slf4j
+@Component
 public class AnotacaoPainel extends JPanel {
 
-    private final Usuario usuario;
+    private Usuario usuario;
     private final AnotacaoController anotacaoController;
     private final LeituraController leituraController;
 
-    public AnotacaoPainel(Usuario usuario, AnotacaoController anotacaoController, LeituraController leituraController) {
-        this.usuario = usuario;
+    @Autowired
+    public AnotacaoPainel(AnotacaoController anotacaoController, LeituraController leituraController) {
         this.anotacaoController = anotacaoController;
         this.leituraController = leituraController;
         initComponents();
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 
     private void initComponents() {
@@ -52,7 +59,7 @@ public class AnotacaoPainel extends JPanel {
         List<Leitura> leituras = leituraController.getAllLeiturasById(usuario);
 
         for (Leitura leitura : leituras) {
-            List<Anotacao> anotacoes = anotacaoController.getAllAnottationByUserId(leitura);
+            List<Anotacao> anotacoes = anotacaoController.getAllAnottation(leitura);
             if (anotacoes == null) continue;
             for (var anotacao : anotacoes) {
                 JButton anottacionButton = new JButton("<html>" + leitura.getTitle() + "<br><b>Data:</b> " + anotacao.getDate() + "</html>");
