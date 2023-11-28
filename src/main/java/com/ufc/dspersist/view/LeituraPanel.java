@@ -37,18 +37,12 @@ public class LeituraPanel extends JPanel {
     private JComboBox<Object> typeBox;
     private JComboBox<Object> statusBox;
 
-    private JPanel cardPanel;
-
     @Autowired
     public LeituraPanel(UsuarioController usuarioController, LeituraController leituraController, AnotacaoController anotacaoController, AutorController autorController) {
         this.usuarioController = usuarioController;
         this.leituraController = leituraController;
         this.anotacaoController = anotacaoController;
         this.autorController = autorController;
-    }
-
-    public void setCardPanel(JPanel cardPanel) {
-        this.cardPanel = cardPanel;
     }
 
     private void setShowPanelButtons(JScrollPane scrollPane, List<Leitura> leituras) {
@@ -68,22 +62,17 @@ public class LeituraPanel extends JPanel {
                 public void mouseClicked(MouseEvent e) {
                     if (e.getButton() == MouseEvent.BUTTON3) {
                         showPopupMenu(leituraButton, leitura);
+                    } else if (e.getButton() == MouseEvent.BUTTON1) {
+                        JOptionPane.showMessageDialog(null,
+                                "<html>" + leitura.getTitle() +
+                                        "<br><b>ID:</b> " + leitura.getId() +
+                                        "<br><b>Autor:</b> " + leitura.getAuthorname() +
+                                        "<br><b>Páginas:</b> " + leitura.getPagesQtd() +
+                                        "<br><b>Tipo:</b> " + leitura.getType().getType() +
+                                        "<br><b>Status:</b> " + leitura.getStatus().getStatus() +
+                                        "</html>", "Informações", JOptionPane.INFORMATION_MESSAGE
+                        );
                     }
-                }
-            });
-
-            leituraButton.addMouseMotionListener(new MouseAdapter() {
-                @Override
-                public void mouseMoved(MouseEvent e) {
-                    leituraButton.setToolTipText(
-                            "<html>" + leitura.getTitle() +
-                            "<br><b>ID:</b> " + leitura.getId() +
-                            "<br><b>Autor:</b> " + leitura.getAuthorname() +
-                            "<br><b>Páginas:</b> " + leitura.getPagesQtd() +
-                            "<br><b>Tipo:</b> " + leitura.getType().getType() +
-                            "<br><b>Status:</b> " + leitura.getStatus().getStatus() +
-                            "</html>"
-                    );
                 }
             });
 
@@ -104,7 +93,7 @@ public class LeituraPanel extends JPanel {
         scrollPane.setViewportView(contentPanel);
     }
 
-    public void setCreateLeiturasPanel() {
+    public void setCreateLeiturasPanel(JPanel cardPanel) {
         JPanel createLeituraCard = new JPanel();
 
         List<Autor> authorsList = autorController.getAllAuthors();
@@ -166,13 +155,6 @@ public class LeituraPanel extends JPanel {
                     if (a.getAuthorName().equals(autorBox.getSelectedItem())) autor = a;
 
                 if (autor != null) {
-                    Leitura novaLeitura = new Leitura();
-                    novaLeitura.setTitle(titleField.getText());
-                    novaLeitura.setAuthorname(autor.getAuthorName());
-                    novaLeitura.setAutor(autor);
-                    novaLeitura.setPagesQtd(Integer.parseInt(pagesQtdField.getText()));
-                    novaLeitura.setType(BookType.getByType((String) typeBox.getSelectedItem()));
-                    novaLeitura.setStatus(BookStatus.getByStatus((String) statusBox.getSelectedItem()));
 
                     Usuario usuario;
                     try {
@@ -183,8 +165,14 @@ public class LeituraPanel extends JPanel {
                         return;
                     }
 
-                    novaLeitura.setUsuario(usuario);
-                    leituraController.saveLeitura(novaLeitura);
+                    leituraController.saveLeitura(
+                            usuario,
+                            titleField.getText(),
+                            autor,
+                            pagesQtdField.getText(),
+                            typeBox.getSelectedItem(),
+                            statusBox.getSelectedItem()
+                    );
 
                     JOptionPane.showMessageDialog(this, "Leitura adicionada com sucesso!");
                 } else {
@@ -202,7 +190,7 @@ public class LeituraPanel extends JPanel {
 
     }
 
-    public void setUpdateLeituraPanel() {
+    public void setUpdateLeituraPanel(JPanel cardPanel) {
         JPanel updateLeituraCard = new JPanel();
 
         List<Autor> authorsList = autorController.getAllAuthors();
@@ -300,7 +288,7 @@ public class LeituraPanel extends JPanel {
 
     }
 
-    public void setListarTodasLeiturasViewPanel() {
+    public void setListarTodasLeiturasViewPanel(JPanel cardPanel) {
         JPanel viewLeiturasCard = new JPanel(new BorderLayout());
         JLabel label = new JLabel("Todas as Leituras");
         label.setHorizontalAlignment(SwingConstants.CENTER);
@@ -326,7 +314,7 @@ public class LeituraPanel extends JPanel {
         cardPanel.add(viewLeiturasCard, "viewLeiturasCard");
     }
 
-    public void setListarLeiturasAndamentoViewPanel() {
+    public void setListarLeiturasAndamentoViewPanel(JPanel cardPanel) {
         JPanel viewLeiturasCard = new JPanel(new BorderLayout());
         JLabel label = new JLabel("Listagem de Leituras em Andamento");
         label.setHorizontalAlignment(SwingConstants.CENTER);
@@ -352,7 +340,7 @@ public class LeituraPanel extends JPanel {
         cardPanel.add(viewLeiturasCard, "viewLeiturasCard");
     }
 
-    public void setListarLeiturasConcluidasViewPanel() {
+    public void setListarLeiturasConcluidasViewPanel(JPanel cardPanel) {
         JPanel viewLeiturasCard = new JPanel(new BorderLayout());
         JLabel label = new JLabel("Listagem de Leituras Concluídas");
         label.setHorizontalAlignment(SwingConstants.CENTER);
@@ -378,7 +366,7 @@ public class LeituraPanel extends JPanel {
         cardPanel.add(viewLeiturasCard, "viewLeiturasCard");
     }
 
-    public void setListarLeiturasNaoLidasViewPanel() {
+    public void setListarLeiturasNaoLidasViewPanel(JPanel cardPanel) {
         JPanel viewLeiturasCard = new JPanel(new BorderLayout());
         JLabel label = new JLabel("Listagem de Leituras não Lidas");
         label.setHorizontalAlignment(SwingConstants.CENTER);
@@ -404,7 +392,7 @@ public class LeituraPanel extends JPanel {
         cardPanel.add(viewLeiturasCard, "viewLeiturasCard");
     }
 
-    public void setListarLeiturasAbandonadasViewPanel() {
+    public void setListarLeiturasAbandonadasViewPanel(JPanel cardPanel) {
         JPanel viewLeiturasCard = new JPanel(new BorderLayout());
         JLabel label = new JLabel("Listagem de Leituras Abandonadas");
         label.setHorizontalAlignment(SwingConstants.CENTER);

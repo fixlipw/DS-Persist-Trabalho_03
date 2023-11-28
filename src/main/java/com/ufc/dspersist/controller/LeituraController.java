@@ -22,17 +22,6 @@ public class LeituraController {
         this.leituraService = leituraService;
     }
 
-    public int getLeiturasQtd(Usuario usuario) {
-
-        try {
-            return usuario.getLeituras().size();
-        } catch (Exception ignored) {
-        }
-
-        return leituraService.getLeiturasQtd(usuario.getId());
-
-    }
-
     public void saveLeitura(Usuario usuario, String title, Autor author, String pages, Object type, Object status) {
 
         int pagesQtd;
@@ -43,12 +32,13 @@ public class LeituraController {
             return;
         }
 
-        BookType bookType = (BookType) type;
-        BookStatus bookStatus = (BookStatus) status;
+        BookType bookType = BookType.getByType((String) type);
+        BookStatus bookStatus = BookStatus.getByStatus((String) status);
 
         Leitura leitura = new Leitura();
         leitura.setTitle(title);
         leitura.setAuthorname(author.getAuthorName());
+        leitura.setAutor(author);
         leitura.setPagesQtd(pagesQtd);
         leitura.setType(bookType);
         leitura.setStatus(bookStatus);
@@ -66,8 +56,8 @@ public class LeituraController {
         leituraService.deleteLeitura(leitura);
     }
 
-    public List<Leitura> getAllLeiturasById(Usuario user) {
-        return leituraService.getAllLeiturasById(user.getId());
+    public List<Leitura> getAllLeiturasById(Usuario usuario) {
+        return leituraService.getAllLeiturasById(usuario.getId());
     }
 
     public List<Leitura> getLeiturasNaoLidasById(Usuario usuario) {

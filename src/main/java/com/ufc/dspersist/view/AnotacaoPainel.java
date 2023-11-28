@@ -2,6 +2,7 @@ package com.ufc.dspersist.view;
 
 import com.ufc.dspersist.controller.AnotacaoController;
 import com.ufc.dspersist.controller.LeituraController;
+import com.ufc.dspersist.controller.UsuarioController;
 import com.ufc.dspersist.model.Anotacao;
 import com.ufc.dspersist.model.Leitura;
 import com.ufc.dspersist.model.Usuario;
@@ -19,34 +20,15 @@ import java.util.List;
 @Component
 public class AnotacaoPainel extends JPanel {
 
-    private Usuario usuario;
     private final AnotacaoController anotacaoController;
+    private final UsuarioController usuarioController;
     private final LeituraController leituraController;
 
     @Autowired
-    public AnotacaoPainel(AnotacaoController anotacaoController, LeituraController leituraController) {
+    public AnotacaoPainel(AnotacaoController anotacaoController, UsuarioController usuarioController, LeituraController leituraController) {
         this.anotacaoController = anotacaoController;
+        this.usuarioController = usuarioController;
         this.leituraController = leituraController;
-        initComponents();
-    }
-
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
-    }
-
-    private void initComponents() {
-        setLayout(new BorderLayout());
-
-        JLabel label = new JLabel("Todas as Leituras");
-        label.setHorizontalAlignment(SwingConstants.CENTER);
-        add(label, BorderLayout.NORTH);
-
-        JScrollPane scrollPane = new JScrollPane();
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-
-        setShowPanelButtons(scrollPane);
-        add(scrollPane, BorderLayout.CENTER);
-
     }
 
     private void setShowPanelButtons(JScrollPane scrollPane) {
@@ -55,6 +37,15 @@ public class AnotacaoPainel extends JPanel {
 
         JPanel line = new JPanel(new FlowLayout(FlowLayout.LEFT));
         line.setMaximumSize(new Dimension(Integer.MAX_VALUE, 150));
+
+        Usuario usuario;
+        try {
+            usuario = usuarioController.getUsuario();
+        } catch (NullPointerException exception) {
+            log.error("Erro: {}", exception.getMessage());
+            JOptionPane.showMessageDialog(null, exception.getMessage());
+            return;
+        }
 
         List<Leitura> leituras = leituraController.getAllLeiturasById(usuario);
 
@@ -70,47 +61,15 @@ public class AnotacaoPainel extends JPanel {
                     @Override
                     public void mouseClicked(MouseEvent e) {
                         if (e.getButton() == MouseEvent.BUTTON3) {
-                            JPopupMenu popupMenu = new JPopupMenu();
-
-                            JMenuItem annotate = new JMenuItem("Atualizar Anotação");
-                            JMenuItem delete = new JMenuItem("Deletar Anotação");
-
-                            annotate.addActionListener(actionListener -> {
-                                String annotation = JOptionPane.showInputDialog("Digite sua anotação:");
-                                anotacao.setAnnotation(annotation);
-                                try {
-                                    anotacaoController.saveAnotacao(anotacao, leitura, annotation);
-                                    JOptionPane.showMessageDialog(null, "Anotação atualizada com sucesso!");
-                                } catch (Exception exception) {
-                                    JOptionPane.showMessageDialog(null, "Erro ao atualizar anotação. Consulte o log para mais informações.");
-                                    log.error("Erro ao atualizar anotação: {}", exception.getMessage(), exception);
-                                }
-                            });
-                            delete.addActionListener(actionListener -> {
-                                int confirm = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja deletar a anotação?", "Confirmação", JOptionPane.YES_NO_OPTION);
-
-                                if (confirm == JOptionPane.YES_OPTION) {
-                                    try {
-                                        anotacaoController.deleteAnotacao(anotacao);
-                                        JOptionPane.showMessageDialog(null, "Anotação excluída com sucesso!");
-                                    } catch (Exception exception) {
-                                        JOptionPane.showMessageDialog(null, "Erro ao excluir anotação. Consulte o log para mais informações.");
-                                        log.error("Erro ao excluir anotação: {}", exception.getMessage(), exception);
-                                    }
-                                }
-                            });
-
-                            popupMenu.add(annotate);
-                            popupMenu.add(delete);
-                            popupMenu.show(anottacionButton, e.getX(), e.getY());
+                            setPopupMenu(anottacionButton, anotacao, leitura);
+                        } else if (e.getButton() == MouseEvent.BUTTON1) {
+                            JOptionPane.showMessageDialog(null,
+                                    "<html>" +
+                                            "<b>Data:</b> " + anotacao.getDate() +
+                                            "<br><b>Anotação:</b> " + anotacao.getAnnotation() +
+                                            "</html>", "Informações", JOptionPane.INFORMATION_MESSAGE
+                            );
                         }
-                    }
-                });
-
-                anottacionButton.addMouseMotionListener(new MouseAdapter() {
-                    @Override
-                    public void mouseMoved(MouseEvent e) {
-                        anottacionButton.setToolTipText("<html>" + anotacao.getAnnotation() + "</html>");
                     }
                 });
 
@@ -133,5 +92,53 @@ public class AnotacaoPainel extends JPanel {
         }
     }
 
+    private void setPopupMenu(JButton anottacionButton, Anotacao anotacao, Leitura leitura) {
+        JPopupMenu popupMenu = new JPopupMenu();
 
+        JMenuItem annotate = new JMenuItem("Atualizar Anotação");
+        JMenuItem delete = new JMenuItem("Deletar Anotação");
+
+        annotate.addActionListener(actionListener -> {
+            String annotation = JOptionPane.showInputDialog("Digite sua anotação:");
+            anotacao.setAnnotation(annotation);
+            try {
+                anotacaoController.saveAnotacao(anotacao, leitura, annotation);
+                JOptionPane.showMessageDialog(null, "Anotação atualizada com sucesso!");
+            } catch (Exception exception) {
+                JOptionPane.showMessageDialog(null, "Erro ao atualizar anotação. Consulte o log para mais informações.");
+                log.error("Erro ao atualizar anotação: {}", exception.getMessage(), exception);
+            }
+        });
+        delete.addActionListener(actionListener -> {
+            int confirm = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja deletar a anotação?", "Confirmação", JOptionPane.YES_NO_OPTION);
+
+            if (confirm == JOptionPane.YES_OPTION) {
+                try {
+                    anotacaoController.deleteAnotacao(anotacao);
+                    JOptionPane.showMessageDialog(null, "Anotação excluída com sucesso!");
+                } catch (Exception exception) {
+                    JOptionPane.showMessageDialog(null, "Erro ao excluir anotação. Consulte o log para mais informações.");
+                    log.error("Erro ao excluir anotação: {}", exception.getMessage(), exception);
+                }
+            }
+        });
+
+        popupMenu.add(annotate);
+        popupMenu.add(delete);
+        popupMenu.show(anottacionButton, anottacionButton.getWidth(), 0);
+    }
+
+    public void setListarTodasAnotacoesViewPanel(JPanel cardPanel) {
+        JPanel readAnotacaoCard = new JPanel(new BorderLayout());
+        JLabel label = new JLabel("Todas as Anotações");
+        label.setHorizontalAlignment(SwingConstants.CENTER);
+
+        JScrollPane scrollPane = new JScrollPane();
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        readAnotacaoCard.add(label, BorderLayout.NORTH);
+
+        setShowPanelButtons(scrollPane);
+        readAnotacaoCard.add(scrollPane, BorderLayout.CENTER);
+        cardPanel.add(readAnotacaoCard, "readAnotacaoCard");
+    }
 }

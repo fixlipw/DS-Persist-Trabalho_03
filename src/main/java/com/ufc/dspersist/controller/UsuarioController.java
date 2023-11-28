@@ -80,16 +80,6 @@ public class UsuarioController {
 
     }
 
-    public Usuario getUsuario(int id) {
-
-        if (user != null && user.getId() == id) {
-            return user;
-        } else {
-            return usuarioService.getUsuario(id);
-        }
-
-    }
-
     public int countLeiturasById(Usuario usuario) {
         return leituraService.getLeiturasQtd(usuario.getId());
     }
