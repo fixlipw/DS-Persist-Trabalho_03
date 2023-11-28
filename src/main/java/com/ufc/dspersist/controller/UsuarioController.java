@@ -29,7 +29,6 @@ public class UsuarioController {
     public void createUser(JTextField usrnField, JPasswordField pswField, JPasswordField cpswField) {
 
         String username = usrnField.getText();
-
         if (username.length() < 2) {
             throw new IllegalArgumentException("O nome do usuário deve ser maior que 2. Tente novamente.");
         } else if (pswField.getPassword().length < 8) {
@@ -37,7 +36,6 @@ public class UsuarioController {
         }
 
         String hashpsw = BCrypt.withDefaults().hashToString(12, cpswField.getPassword());
-
         BCrypt.Result result = BCrypt.verifyer().verify(pswField.getPassword(), hashpsw);
 
         if (!result.verified) {
@@ -52,18 +50,15 @@ public class UsuarioController {
     public Usuario authUser(JTextField usrnField, JPasswordField pswField) {
 
         String username = usrnField.getText();
-
         user = usuarioService.findUsuarioByUsername(username);
 
         BCrypt.Result result;
 
         if (user != null) {
             result = BCrypt.verifyer().verify(pswField.getPassword(), user.getPassword());
-
             if (result.verified) {
                 return user;
             }
-
         }
 
         throw new NullPointerException("Usuário ou senha inválidos");

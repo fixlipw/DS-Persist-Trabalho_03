@@ -9,6 +9,8 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.util.List;
 
@@ -18,6 +20,7 @@ public class AutorPanel extends JPanel {
 
     private final AutorController autorController;
 
+    @Autowired
     public AutorPanel(AutorController autorController) {
         this.autorController = autorController;
     }

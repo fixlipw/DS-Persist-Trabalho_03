@@ -93,6 +93,42 @@ public class LeituraPanel extends JPanel {
         scrollPane.setViewportView(contentPanel);
     }
 
+    private void showPopupMenu(JButton leituraButton, Leitura leitura) {
+        JPopupMenu popupMenu = new JPopupMenu();
+
+        JMenuItem annotate = new JMenuItem("Criar Anotação");
+        JMenuItem delete = new JMenuItem("Deletar Leitura");
+
+        annotate.addActionListener(actionListener -> {
+            try {
+                String annotation = JOptionPane.showInputDialog("Digite sua anotação:");
+                anotacaoController.saveAnotacao(new Anotacao(), leitura, annotation);
+                JOptionPane.showMessageDialog(null, "Anotação adicionada com sucesso.");
+                log.info("Info: Anotação adicionada com sucesso.");
+            } catch (Exception exception) {
+                JOptionPane.showMessageDialog(null, "Erro ao adicionar anotação. Tente Novamente.");
+                    log.error("Erro: {}", exception.getMessage(), exception);
+            }
+        });
+        delete.addActionListener(actionListener -> {
+            int confirm = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja deletar a leitura: \"" + leitura.getTitle() + "\"", "Confirmação", JOptionPane.YES_NO_OPTION);
+
+            if (confirm == JOptionPane.YES_OPTION) {
+                try {
+                    leituraController.deleteLeitura(leitura);
+                    JOptionPane.showMessageDialog(null, "Leitura excluída com sucesso!");
+                    log.info("Info: Leitura " + leitura.getTitle() + " excluída com sucesso.");
+                } catch (Exception exception) {
+                    JOptionPane.showMessageDialog(null, "Erro ao excluir leitura. Tente novamente.");
+                    log.error("Erro ao excluir leitura: {}", exception.getMessage(), exception);
+                }
+            }
+        });
+        popupMenu.add(annotate);
+        popupMenu.add(delete);
+        popupMenu.show(leituraButton, leituraButton.getWidth(), 0);
+    }
+
     public void setCreateLeiturasPanel(JPanel cardPanel) {
         JPanel createLeituraCard = new JPanel();
 
@@ -416,42 +452,6 @@ public class LeituraPanel extends JPanel {
         viewLeiturasCard.add(scrollPane, BorderLayout.CENTER);
 
         cardPanel.add(viewLeiturasCard, "viewLeiturasCard");
-    }
-
-    private void showPopupMenu(JButton leituraButton, Leitura leitura) {
-        JPopupMenu popupMenu = new JPopupMenu();
-
-        JMenuItem annotate = new JMenuItem("Criar Anotação");
-        JMenuItem delete = new JMenuItem("Deletar Leitura");
-
-        annotate.addActionListener(actionListener -> {
-            try {
-                String annotation = JOptionPane.showInputDialog("Digite sua anotação:");
-                anotacaoController.saveAnotacao(new Anotacao(), leitura, annotation);
-                JOptionPane.showMessageDialog(null, "Anotação adicionada com sucesso.");
-                log.info("Info: Anotação adicionada com sucesso.");
-            } catch (Exception exception) {
-                JOptionPane.showMessageDialog(null, "Erro ao adicionar anotação. Tente Novamente.");
-                    log.error("Erro: {}", exception.getMessage(), exception);
-            }
-        });
-        delete.addActionListener(actionListener -> {
-            int confirm = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja deletar a leitura: \"" + leitura.getTitle() + "\"", "Confirmação", JOptionPane.YES_NO_OPTION);
-
-            if (confirm == JOptionPane.YES_OPTION) {
-                try {
-                    leituraController.deleteLeitura(leitura);
-                    JOptionPane.showMessageDialog(null, "Leitura excluída com sucesso!");
-                    log.info("Info: Leitura " + leitura.getTitle() + " excluída com sucesso.");
-                } catch (Exception exception) {
-                    JOptionPane.showMessageDialog(null, "Erro ao excluir leitura. Tente novamente.");
-                    log.error("Erro ao excluir leitura: {}", exception.getMessage(), exception);
-                }
-            }
-        });
-        popupMenu.add(annotate);
-        popupMenu.add(delete);
-        popupMenu.show(leituraButton, leituraButton.getWidth(), 0);
     }
 
 }

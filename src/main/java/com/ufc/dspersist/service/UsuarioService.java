@@ -34,5 +34,4 @@ public class UsuarioService {
         return usuarioRepository.findByIdNamedQuery(id);
     }
 
-
 }
