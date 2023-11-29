@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Objects;
 
 @Slf4j
 @Component
@@ -43,6 +44,8 @@ public class MainFrame extends JFrame {
 
     public MainFrame() {
         super("Tela inicial");
+        ImageIcon icon = new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("bookstand.png")));
+        setIconImage(icon.getImage());
         setSize(new Dimension(500, 400));
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -110,49 +113,65 @@ public class MainFrame extends JFrame {
 
         usuarioMenuItem.addActionListener(e -> {
             usuarioPanel.setUsuarioPanel(cardPanel, usuario);
+            reloadPanel();
             cardLayout.show(cardPanel, "usuarioInfoPanel");
         });
         createLeituraMenuItem.addActionListener(e -> {
             leituraPanel.setCreateLeiturasPanel(cardPanel);
+            reloadPanel();
             cardLayout.show(cardPanel, "createLeituraCard");
         });
         updateLeituraMenuItem.addActionListener(e -> {
             leituraPanel.setUpdateLeituraPanel(cardPanel);
+            reloadPanel();
             cardLayout.show(cardPanel, "updateLeituraCard");
         });
         listarTodasLeiturasItem.addActionListener(e -> {
             leituraPanel.setListarTodasLeiturasViewPanel(cardPanel);
+            reloadPanel();
             cardLayout.show(cardPanel, "viewLeiturasCard");
         });
         listarEmAndamentoItem.addActionListener(e -> {
             leituraPanel.setListarLeiturasAndamentoViewPanel(cardPanel);
+            reloadPanel();
             cardLayout.show(cardPanel, "viewLeiturasCard");
         });
         listarConcluidasItem.addActionListener(e -> {
             leituraPanel.setListarLeiturasConcluidasViewPanel(cardPanel);
+            reloadPanel();
             cardLayout.show(cardPanel, "viewLeiturasCard");
         });
         createAutorMenuItem.addActionListener(e -> {
             autorPanel.setCreateAutoresPanel(cardPanel);
+            reloadPanel();
             cardLayout.show(cardPanel, "createAutoresCard");
         });
         readAutorMenuItem.addActionListener(e -> {
             autorPanel.setListarTodosAutoresViewPanel(cardPanel);
+            reloadPanel();
             cardLayout.show(cardPanel, "readAutoresCard");
         });
         readAnotacaoMenuItem.addActionListener(e -> {
             anotacaoPanel.setListarTodasAnotacoesViewPanel(cardPanel);
+            reloadPanel();
             cardLayout.show(cardPanel, "readAnotacaoCard");
         });
         listarNaoLidoItem.addActionListener(e -> {
             leituraPanel.setListarLeiturasNaoLidasViewPanel(cardPanel);
+            reloadPanel();
             cardLayout.show(cardPanel, "viewLeiturasCard");
         });
         listarAbandonadoItem.addActionListener(e -> {
             leituraPanel.setListarLeiturasAbandonadasViewPanel(cardPanel);
+            reloadPanel();
             cardLayout.show(cardPanel, "viewLeiturasCard");
         });
 
+    }
+
+    private void reloadPanel() {
+        cardPanel.revalidate();
+        cardPanel.repaint();
     }
 
     private void initComponents() {

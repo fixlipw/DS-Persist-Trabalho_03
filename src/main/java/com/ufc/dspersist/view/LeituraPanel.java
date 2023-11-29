@@ -37,6 +37,8 @@ public class LeituraPanel extends JPanel {
     private JComboBox<Object> typeBox;
     private JComboBox<Object> statusBox;
 
+    private JPanel contentPanel;
+
     @Autowired
     public LeituraPanel(UsuarioController usuarioController, LeituraController leituraController, AnotacaoController anotacaoController, AutorController autorController) {
         this.usuarioController = usuarioController;
@@ -46,11 +48,10 @@ public class LeituraPanel extends JPanel {
     }
 
     private void setShowPanelButtons(JScrollPane scrollPane, List<Leitura> leituras) {
-        JPanel contentPanel = new JPanel();
-        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
 
-        JPanel line = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        line.setMaximumSize(new Dimension(Integer.MAX_VALUE, 150));
+        contentPanel = new JPanel();
+        int line = (int) Math.ceil(leituras.size() / 3.0);
+        contentPanel.setLayout(new GridLayout(line, 3));
 
         for (Leitura leitura : leituras) {
             JButton leituraButton = new JButton(leitura.getTitle());
@@ -61,7 +62,7 @@ public class LeituraPanel extends JPanel {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     if (e.getButton() == MouseEvent.BUTTON3) {
-                        showPopupMenu(leituraButton, leitura);
+                        showPopupMenu(scrollPane, leituraButton, leitura);
                     } else if (e.getButton() == MouseEvent.BUTTON1) {
                         JOptionPane.showMessageDialog(null,
                                 "<html>" + leitura.getTitle() +
@@ -76,46 +77,42 @@ public class LeituraPanel extends JPanel {
                 }
             });
 
-            line.add(leituraButton);
-
-            if (line.getComponentCount() == 3) {
-                contentPanel.add(line);
-                line = new JPanel(new FlowLayout(FlowLayout.LEFT));
-                line.setMaximumSize(new Dimension(Integer.MAX_VALUE, 150));
-            }
-        }
-
-        if (line.getComponentCount() > 0) {
-            contentPanel.add(line);
+            contentPanel.add(leituraButton);
         }
 
         scrollPane.createVerticalScrollBar();
         scrollPane.setViewportView(contentPanel);
     }
 
-    private void showPopupMenu(JButton leituraButton, Leitura leitura) {
+    private void showPopupMenu(JScrollPane scrollPane, JButton leituraButton, Leitura leitura) {
         JPopupMenu popupMenu = new JPopupMenu();
-
         JMenuItem annotate = new JMenuItem("Criar Anotação");
         JMenuItem delete = new JMenuItem("Deletar Leitura");
 
         annotate.addActionListener(actionListener -> {
             try {
                 String annotation = JOptionPane.showInputDialog("Digite sua anotação:");
-                anotacaoController.saveAnotacao(new Anotacao(), leitura, annotation);
-                JOptionPane.showMessageDialog(null, "Anotação adicionada com sucesso.");
-                log.info("Info: Anotação adicionada com sucesso.");
+                if (annotation != null) {
+                    anotacaoController.saveAnotacao(new Anotacao(), leitura, annotation);
+                    JOptionPane.showMessageDialog(null, "Anotação adicionada com sucesso.");
+                    log.info("Info: Anotação adicionada com sucesso.");
+                }
             } catch (Exception exception) {
                 JOptionPane.showMessageDialog(null, "Erro ao adicionar anotação. Tente Novamente.");
-                    log.error("Erro: {}", exception.getMessage(), exception);
+                log.error("Erro: {}", exception.getMessage(), exception);
             }
         });
         delete.addActionListener(actionListener -> {
             int confirm = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja deletar a leitura: \"" + leitura.getTitle() + "\"", "Confirmação", JOptionPane.YES_NO_OPTION);
-
             if (confirm == JOptionPane.YES_OPTION) {
                 try {
                     leituraController.deleteLeitura(leitura);
+
+                    Usuario usuario = usuarioController.getUsuario();
+                    List<Leitura> updatedList = leituraController.getAllLeiturasById(usuario);
+                    updateContentPanel(scrollPane, updatedList);
+
+
                     JOptionPane.showMessageDialog(null, "Leitura excluída com sucesso!");
                     log.info("Info: Leitura " + leitura.getTitle() + " excluída com sucesso.");
                 } catch (Exception exception) {
@@ -127,6 +124,45 @@ public class LeituraPanel extends JPanel {
         popupMenu.add(annotate);
         popupMenu.add(delete);
         popupMenu.show(leituraButton, leituraButton.getWidth(), 0);
+    }
+
+    public void updateContentPanel(JScrollPane scrollPane, List<Leitura> newLeituras) {
+        contentPanel.removeAll();
+        int rowNUmber = (int) Math.ceil(newLeituras.size() / 3.0);
+        contentPanel.setLayout(new GridLayout(rowNUmber, 3));
+
+        for (Leitura leitura : newLeituras) {
+            JButton leituraButton = new JButton(leitura.getTitle());
+            leituraButton.setBorderPainted(false);
+            leituraButton.setPreferredSize(new Dimension(150, 75));
+
+            leituraButton.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (e.getButton() == MouseEvent.BUTTON3) {
+                        showPopupMenu(scrollPane, leituraButton, leitura);
+                    } else if (e.getButton() == MouseEvent.BUTTON1) {
+                        JOptionPane.showMessageDialog(null,
+                                "<html>" + leitura.getTitle() +
+                                        "<br><b>ID:</b> " + leitura.getId() +
+                                        "<br><b>Autor:</b> " + leitura.getAuthorname() +
+                                        "<br><b>Páginas:</b> " + leitura.getPagesQtd() +
+                                        "<br><b>Tipo:</b> " + leitura.getType().getType() +
+                                        "<br><b>Status:</b> " + leitura.getStatus().getStatus() +
+                                        "</html>", "Informações", JOptionPane.INFORMATION_MESSAGE
+                        );
+                    }
+                }
+            });
+
+            contentPanel.add(leituraButton);
+        }
+
+        scrollPane.createVerticalScrollBar();
+        scrollPane.setViewportView(contentPanel);
+
+        contentPanel.revalidate();
+        contentPanel.repaint();
     }
 
     public void setCreateLeiturasPanel(JPanel cardPanel) {

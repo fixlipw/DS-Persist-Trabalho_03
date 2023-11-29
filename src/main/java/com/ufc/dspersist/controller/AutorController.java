@@ -22,6 +22,10 @@ public class AutorController {
     }
 
     public void saveAutor(String autorName, String brief) {
+        if (autorName.isEmpty() || brief.isEmpty()) {
+            throw new IllegalArgumentException("Nome ou descrição do autor não podem ser nulos ou vazios");
+        }
+
         Autor autor = new Autor();
         autor.setAuthorName(autorName);
         autor.setBrief(brief);

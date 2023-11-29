@@ -23,6 +23,11 @@ public class AnotacaoController {
         if (anotacao.getId() == null) {
             anotacao = new Anotacao();
         }
+
+        if (anottation == null || anottation.isEmpty()) {
+            throw new NullPointerException("Anotação não pode ser nula ou vazia");
+        }
+
         anotacao.setAnnotation(anottation);
         anotacao.setDate(LocalDateTime.now());
         anotacao.setLeitura(leitura);

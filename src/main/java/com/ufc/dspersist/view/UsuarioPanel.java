@@ -53,7 +53,7 @@ public class UsuarioPanel extends JPanel {
         JLabel leiturasLabel = new JLabel("Leituras:");
         gbc.gridx = 0;
         gbc.gridy = 2;
-        add(leiturasLabel, gbc);
+        contentPanel.add(leiturasLabel, gbc);
 
         int quantidadeLeituras = usuarioController.countLeiturasById(usuario);
         JLabel leiturasCountLabel = new JLabel(String.valueOf(quantidadeLeituras));
@@ -81,6 +81,8 @@ public class UsuarioPanel extends JPanel {
         gbc.gridx = 1;
         gbc.gridy = 4;
         contentPanel.add(editProfileButton, gbc);
+
+        cardPanel.add(contentPanel, "usuarioInfoPanel");
 
         changePasswordButton.addActionListener(e -> {
             JPasswordField passwordField = new JPasswordField();
@@ -160,9 +162,8 @@ public class UsuarioPanel extends JPanel {
                     JOptionPane.showMessageDialog(null, "Nome de usuário não pode ser vazio. Tente novamente.");
                     log.error("Erro: Nome de usuário não pode ser vazio");
                 }
+
             }
         });
-
-        cardPanel.add(contentPanel, "usuarioInfoPanel");
     }
 }

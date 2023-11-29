@@ -9,6 +9,7 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.util.Objects;
 
 @Log4j2
 @Component
@@ -30,6 +31,8 @@ public class LoginFrame extends JFrame {
     @Autowired
     public LoginFrame(MainFrame mainFrame, UsuarioController usuarioController) {
         super("BookStand");
+        ImageIcon icon = new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("bookstand.png")));
+        setIconImage(icon.getImage());
         setSize(new Dimension(500, 400));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);

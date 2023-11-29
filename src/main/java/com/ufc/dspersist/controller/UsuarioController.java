@@ -66,13 +66,11 @@ public class UsuarioController {
     }
 
     public Usuario getUsuario() {
+        return getUsuario(user);
+    }
 
-        if (user != null) {
-            return user;
-        }
-
-        throw new NullPointerException("Não há usuários logados");
-
+    public Usuario getUsuario(Usuario user) {
+        return usuarioService.getUsuario(user.getId());
     }
 
     public int countLeiturasById(Usuario usuario) {

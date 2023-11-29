@@ -24,6 +24,8 @@ public class AnotacaoPainel extends JPanel {
     private final UsuarioController usuarioController;
     private final LeituraController leituraController;
 
+    private JPanel contentPanel;
+
     @Autowired
     public AnotacaoPainel(AnotacaoController anotacaoController, UsuarioController usuarioController, LeituraController leituraController) {
         this.anotacaoController = anotacaoController;
@@ -32,22 +34,17 @@ public class AnotacaoPainel extends JPanel {
     }
 
     private void setShowPanelButtons(JScrollPane scrollPane) {
-        JPanel contentPanel = new JPanel();
-        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
 
-        JPanel line = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        line.setMaximumSize(new Dimension(Integer.MAX_VALUE, 150));
-
-        Usuario usuario;
-        try {
-            usuario = usuarioController.getUsuario();
-        } catch (NullPointerException exception) {
-            log.error("Erro: {}", exception.getMessage());
-            JOptionPane.showMessageDialog(null, exception.getMessage());
-            return;
-        }
-
+        Usuario usuario = usuarioController.getUsuario();
         List<Leitura> leituras = leituraController.getAllLeiturasById(usuario);
+
+        int totalAnotacoes = leituras.stream()
+                .mapToInt(leitura -> anotacaoController.getAllAnottation(leitura).size())
+                .sum();
+
+        contentPanel = new JPanel();
+        int line = (int) Math.ceil(totalAnotacoes / 3.0);
+        contentPanel.setLayout(new GridLayout(line, 3));
 
         for (Leitura leitura : leituras) {
             List<Anotacao> anotacoes = anotacaoController.getAllAnottation(leitura);
@@ -61,30 +58,14 @@ public class AnotacaoPainel extends JPanel {
                     @Override
                     public void mouseClicked(MouseEvent e) {
                         if (e.getButton() == MouseEvent.BUTTON3) {
-                            setPopupMenu(anottacionButton, anotacao, leitura);
+                            setPopupMenu(scrollPane, anottacionButton, anotacao, leitura);
                         } else if (e.getButton() == MouseEvent.BUTTON1) {
-                            JOptionPane.showMessageDialog(null,
-                                    "<html>" +
-                                            "<b>Data:</b> " + anotacao.getDate() +
-                                            "<br><b>Anotação:</b> " + anotacao.getAnnotation() +
-                                            "</html>", "Informações", JOptionPane.INFORMATION_MESSAGE
-                            );
+                            JOptionPane.showMessageDialog(null, "<html>" + "<b>Data:</b> " + anotacao.getDate() + "<br><b>Anotação:</b> " + anotacao.getAnnotation() + "</html>", "Informações", JOptionPane.INFORMATION_MESSAGE);
                         }
                     }
                 });
 
-                line.add(anottacionButton);
-
-                if (line.getComponentCount() == 3) {
-                    contentPanel.add(line);
-                    line = new JPanel(new FlowLayout(FlowLayout.LEFT));
-                    line.setMaximumSize(new Dimension(Integer.MAX_VALUE, 150));
-                }
-
-            }
-
-            if (line.getComponentCount() > 0) {
-                contentPanel.add(line);
+                contentPanel.add(anottacionButton);
             }
 
             scrollPane.createVerticalScrollBar();
@@ -92,7 +73,7 @@ public class AnotacaoPainel extends JPanel {
         }
     }
 
-    private void setPopupMenu(JButton anottacionButton, Anotacao anotacao, Leitura leitura) {
+    private void setPopupMenu(JScrollPane scrollPane, JButton anottacionButton, Anotacao anotacao, Leitura leitura) {
         JPopupMenu popupMenu = new JPopupMenu();
 
         JMenuItem annotate = new JMenuItem("Atualizar Anotação");
@@ -100,13 +81,16 @@ public class AnotacaoPainel extends JPanel {
 
         annotate.addActionListener(actionListener -> {
             String annotation = JOptionPane.showInputDialog("Digite sua anotação:");
-            anotacao.setAnnotation(annotation);
-            try {
-                anotacaoController.saveAnotacao(anotacao, leitura, annotation);
-                JOptionPane.showMessageDialog(null, "Anotação atualizada com sucesso!");
-            } catch (Exception exception) {
-                JOptionPane.showMessageDialog(null, "Erro ao atualizar anotação. Consulte o log para mais informações.");
-                log.error("Erro ao atualizar anotação: {}", exception.getMessage(), exception);
+
+            if (annotation != null) {
+                anotacao.setAnnotation(annotation);
+                try {
+                    anotacaoController.saveAnotacao(anotacao, leitura, annotation);
+                    JOptionPane.showMessageDialog(null, "Anotação atualizada com sucesso!");
+                } catch (Exception exception) {
+                    JOptionPane.showMessageDialog(null, "Erro ao atualizar anotação: " + exception.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+                    log.error("Erro ao atualizar anotação: {}", exception.getMessage(), exception);
+                }
             }
         });
         delete.addActionListener(actionListener -> {
@@ -115,6 +99,11 @@ public class AnotacaoPainel extends JPanel {
             if (confirm == JOptionPane.YES_OPTION) {
                 try {
                     anotacaoController.deleteAnotacao(anotacao);
+
+                    Usuario usuario = usuarioController.getUsuario();
+                    List<Leitura> updatedList = leituraController.getAllLeiturasById(usuario);
+                    updateContentPanel(scrollPane, updatedList);
+
                     JOptionPane.showMessageDialog(null, "Anotação excluída com sucesso!");
                 } catch (Exception exception) {
                     JOptionPane.showMessageDialog(null, "Erro ao excluir anotação. Consulte o log para mais informações.");
@@ -126,6 +115,41 @@ public class AnotacaoPainel extends JPanel {
         popupMenu.add(annotate);
         popupMenu.add(delete);
         popupMenu.show(anottacionButton, anottacionButton.getWidth(), 0);
+    }
+
+    public void updateContentPanel(JScrollPane scrollPane, List<Leitura> newLeituras) {
+        contentPanel.removeAll();
+        int rowNUmber = (int) Math.ceil(newLeituras.size() / 3.0);
+        contentPanel.setLayout(new GridLayout(rowNUmber, 3));
+
+        for (Leitura leitura : newLeituras) {
+            List<Anotacao> anotacoes = anotacaoController.getAllAnottation(leitura);
+            if (anotacoes == null) continue;
+            for (var anotacao : anotacoes) {
+                JButton anottacionButton = new JButton("<html>" + leitura.getTitle() + "<br><b>Data:</b> " + anotacao.getDate() + "</html>");
+                anottacionButton.setBorderPainted(false);
+                anottacionButton.setPreferredSize(new Dimension(150, 75));
+
+                anottacionButton.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        if (e.getButton() == MouseEvent.BUTTON3) {
+                            setPopupMenu(scrollPane, anottacionButton, anotacao, leitura);
+                        } else if (e.getButton() == MouseEvent.BUTTON1) {
+                            JOptionPane.showMessageDialog(null, "<html>" + "<b>Data:</b> " + anotacao.getDate() + "<br><b>Anotação:</b> " + anotacao.getAnnotation() + "</html>", "Informações", JOptionPane.INFORMATION_MESSAGE);
+                        }
+                    }
+                });
+
+                contentPanel.add(anottacionButton);
+            }
+
+            scrollPane.createVerticalScrollBar();
+            scrollPane.setViewportView(contentPanel);
+
+            contentPanel.revalidate();
+            contentPanel.repaint();
+        }
     }
 
     public void setListarTodasAnotacoesViewPanel(JPanel cardPanel) {
