@@ -34,14 +34,6 @@ public class MainFrame extends JFrame {
     private AutorPanel autorPanel;
     private AnotacaoPainel anotacaoPanel;
 
-    @Autowired
-    private void setPanels(UsuarioPanel usuarioPanel, LeituraPanel leituraPanel, AutorPanel autorPanel, AnotacaoPainel anotacaoPanel) {
-        this.usuarioPanel = usuarioPanel;
-        this.leituraPanel = leituraPanel;
-        this.autorPanel = autorPanel;
-        this.anotacaoPanel = anotacaoPanel;
-    }
-
     public MainFrame() {
         super("Tela inicial");
         ImageIcon icon = new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("bookstand.png")));
@@ -56,9 +48,16 @@ public class MainFrame extends JFrame {
         setVisible(false);
     }
 
-
     public void setLoggedUsuario(Usuario usuario) {
         this.usuario = usuario;
+    }
+
+    @Autowired
+    private void setPanels(UsuarioPanel usuarioPanel, LeituraPanel leituraPanel, AutorPanel autorPanel, AnotacaoPainel anotacaoPanel) {
+        this.usuarioPanel = usuarioPanel;
+        this.leituraPanel = leituraPanel;
+        this.autorPanel = autorPanel;
+        this.anotacaoPanel = anotacaoPanel;
     }
 
     private void setMenu() {

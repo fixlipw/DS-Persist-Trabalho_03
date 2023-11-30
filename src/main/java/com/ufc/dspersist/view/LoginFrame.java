@@ -148,7 +148,7 @@ public class LoginFrame extends JFrame {
             var usuario = usuarioController.authUser(usernameField, passwordField);
 
             if (usuario != null) {
-                JOptionPane.showMessageDialog(null, "Bem-vindo(a) " + usuario.getUsername());
+                JOptionPane.showMessageDialog(null, "Bem-vindo(a), " + usuario.getUsername());
                 log.info("Info: Usuário autenticado com sucesso.");
                 mainFrame.setLoggedUsuario(usuario);
                 setVisible(false);

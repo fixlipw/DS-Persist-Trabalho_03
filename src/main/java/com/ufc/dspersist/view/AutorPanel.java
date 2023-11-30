@@ -15,163 +15,151 @@ import java.util.List;
 
 @Slf4j
 @Component
-public class AutorPanel extends JPanel {
+public class AutorPanel {
 
     private final AutorController autorController;
 
-    private JPanel contentPanel;
+    private final JPanel buttonPanel;
 
     @Autowired
     public AutorPanel(AutorController autorController) {
         this.autorController = autorController;
+        buttonPanel = new JPanel();
     }
 
-    private void setShowPanelButtons(JScrollPane scrollPane) {
-        contentPanel = new JPanel();
-        List<Autor> autores = autorController.getAllAuthors();
 
-        int row = (int) Math.ceil(autores.size() / 3.0);
-        contentPanel.setLayout(new GridLayout(row, 3));
+    private void updateButtonPanel(JScrollPane scrollPane, List<Autor> newAutores) {
+        buttonPanel.removeAll();
 
-        for (Autor autor : autores) {
-            JButton autorButton = new JButton(autor.getAuthorName());
-            autorButton.setBorderPainted(false);
-            autorButton.setPreferredSize(new Dimension(150, 75));
-
-            autorButton.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    if (e.getButton() == MouseEvent.BUTTON3) {
-                        showPopupMenu(scrollPane, autorButton, autor);
-                    } else if (e.getButton() == MouseEvent.BUTTON1) {
-                        JOptionPane.showMessageDialog(null,
-                                "<html>" + autor.getAuthorName() +
-                                        "<br><b>Descrição:</b> " + autor.getBrief() +
-                                        "</html>",
-                                "Informações", JOptionPane.INFORMATION_MESSAGE);
-                    }
-                }
-            });
-
-            contentPanel.add(autorButton);
-        }
-
-        scrollPane.createVerticalScrollBar();
-        scrollPane.setViewportView(contentPanel);
-    }
-
-    private void showPopupMenu(JScrollPane scrollPane, JButton autorButton, Autor autor) {
-        JPopupMenu popupMenu = new JPopupMenu();
-
-        JMenuItem update = new JMenuItem("Atualizar Descrição");
-        JMenuItem delete = new JMenuItem("Deletar Autor");
-
-        update.addActionListener(e -> {
-            String newDescription = JOptionPane.showInputDialog("Insira a nova descrição:");
-            if (newDescription != null && !newDescription.isEmpty()) {
-                autorController.updateAutor(autor, newDescription);
-                JOptionPane.showMessageDialog(null, "Descrição atualizada com sucesso!");
-            } else {
-                JOptionPane.showMessageDialog(null, "A descrição não pode estar vazia ou nula", "Erro", JOptionPane.ERROR_MESSAGE);
-            }
-        });
-
-        delete.addActionListener(e -> {
-            int confirm = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja deletar este autor?", "Confirmação", JOptionPane.YES_NO_OPTION);
-
-            if (confirm == JOptionPane.YES_OPTION) {
-                SwingWorker<Void, Void> worker = new SwingWorker<>() {
-                    private Exception exception;
-
-                    @Override
-                    protected Void doInBackground() {
-                        try {
-                            autorController.deleteAutor(autor);
-                        } catch (Exception ex) {
-                            exception = ex;
-                        }
-                        return null;
-                    }
-
-                    @Override
-                    protected void done() {
-                        if (exception != null) {
-                            JOptionPane.showMessageDialog(null, "Erro ao deletar autor. Consulte o log para mais informações.");
-                            log.error("Erro ao deletar autor: {}", exception.getMessage(), exception);
-                        } else {
-                            SwingWorker<List<Autor>, Void> dataWorker = new SwingWorker<>() {
-                                @Override
-                                protected List<Autor> doInBackground() {
-                                    return autorController.getAllAuthors();
-                                }
-
-                                @Override
-                                protected void done() {
-                                    try {
-                                        List<Autor> newAutorlist = get();
-                                        updateContentPanel(scrollPane, newAutorlist);
-                                        JOptionPane.showMessageDialog(null, "Autor deletado com sucesso!");
-                                    } catch (Exception ex) {
-                                        JOptionPane.showMessageDialog(null, "Erro ao atualizar a lista. Consulte o log para mais informações.");
-                                        log.error("Erro ao atualizar a lista: {}", ex.getMessage(), ex);
-                                    }
-                                }
-                            };
-                            dataWorker.execute();
-                        }
-                    }
-                };
-                worker.execute();
-            }
-        });
-
-        popupMenu.add(update);
-        popupMenu.add(delete);
-        popupMenu.show(autorButton, autorButton.getWidth(), 0);
-    }
-
-    private void updateContentPanel(JScrollPane scrollPane, List<Autor> newAutores) {
-        contentPanel.removeAll();
-
-        int row = (int) Math.ceil(newAutores.size() / 3.0);
-        contentPanel.setLayout(new GridLayout(row, 3));
+        int line = Math.max(3, (int) Math.ceil(newAutores.size() / 3.0));
+        buttonPanel.setLayout(new GridLayout(line, 3));
 
         for (Autor autor : newAutores) {
-            JButton autorButton = new JButton(autor.getAuthorName());
-            autorButton.setBorderPainted(false);
-            autorButton.setPreferredSize(new Dimension(150, 75));
+            JButton autorButton = createAutorButton(autor, scrollPane);
+            buttonPanel.add(autorButton);
+        }
+        scrollPane.createVerticalScrollBar();
+        scrollPane.setViewportView(buttonPanel);
 
-            autorButton.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    if (e.getButton() == MouseEvent.BUTTON3) {
-                        showPopupMenu(scrollPane, autorButton, autor);
-                    } else if (e.getButton() == MouseEvent.BUTTON1) {
-                        JOptionPane.showMessageDialog(null, "<html>" + autor.getAuthorName() + "<br><b>Descrição:</b> " + autor.getBrief() + "</html>", "Informações", JOptionPane.INFORMATION_MESSAGE);
-                    }
+        buttonPanel.revalidate();
+        buttonPanel.repaint();
+    }
+
+    private JButton createAutorButton(Autor autor, JScrollPane scrollPane) {
+        JButton autorButton = new JButton(autor.getAuthorName());
+        autorButton.setBorderPainted(false);
+        autorButton.setPreferredSize(new Dimension(150, 75));
+
+        autorButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getButton() == MouseEvent.BUTTON1) {
+                    doAutorAction(autor, scrollPane);
                 }
-            });
+            }
+        });
 
-            contentPanel.add(autorButton);
+        return autorButton;
+    }
 
-            contentPanel.revalidate();
-            contentPanel.repaint();
+    private void doAutorAction(Autor autor, JScrollPane scrollPane) {
+        int option = JOptionPane.showOptionDialog(
+                null,
+                "<html>" + autor.getAuthorName() + "<br><b>Descrição:</b> " + autor.getBrief() + "</html>",
+                "Informações",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.INFORMATION_MESSAGE,
+                null,
+                new Object[] {"Deletar", "Atualizar", "Cancelar"},
+                null
+        );
+
+        if (option == 0) {
+            int confirm = JOptionPane.showConfirmDialog(null,
+                    "Tem certeza que deseja deletar este autor?",
+                    "Confirmação", JOptionPane.YES_NO_OPTION);
+
+            if (confirm == JOptionPane.YES_OPTION) {
+                SwingUtilities.invokeLater(() -> {
+                    SwingWorker<Void, Void> worker = new SwingWorker<>() {
+                        private Exception exception;
+
+                        @Override
+                        protected Void doInBackground() {
+                            try {
+                                autorController.deleteAutor(autor);
+                            } catch (Exception ex) {
+                                exception = ex;
+                            }
+                            return null;
+                        }
+
+                        @Override
+                        protected void done() {
+                            if (exception != null) {
+                                JOptionPane.showMessageDialog(null,
+                                        "Erro ao deletar autor. Consulte o log para mais informações.");
+                                log.error("Erro ao deletar autor: {}", exception.getMessage(), exception);
+                            } else {
+                                SwingWorker<List<Autor>, Void> dataWorker = new SwingWorker<>() {
+                                    @Override
+                                    protected List<Autor> doInBackground() {
+                                        return autorController.getAllAuthors();
+                                    }
+
+                                    @Override
+                                    protected void done() {
+                                        try {
+                                            List<Autor> newAutorlist = get();
+                                            updateButtonPanel(scrollPane, newAutorlist);
+                                            JOptionPane.showMessageDialog(null,
+                                                    "Autor deletado com sucesso!");
+                                        } catch (Exception ex) {
+                                            JOptionPane.showMessageDialog(null,
+                                                    "Erro ao atualizar a lista. Consulte o log para mais informações.");
+                                            log.error("Erro ao atualizar a lista: {}", ex.getMessage(), ex);
+                                        }
+                                    }
+                                };
+                                dataWorker.execute();
+                            }
+                        }
+                    };
+                    worker.execute();
+                });
+            }
+        } else if (option == 1) {
+            String newDescription = JOptionPane.showInputDialog("Insira a nova descrição:");
+            if (newDescription != null) {
+                try {
+                    autorController.updateAutor(autor, newDescription);
+                    JOptionPane.showMessageDialog(null,
+                            "Descrição atualizada com sucesso!");
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(null,
+                            "A descrição não pode estar vazia",
+                            "Erro", JOptionPane.ERROR_MESSAGE);
+                }
+            }
         }
     }
 
     public void setListarTodosAutoresViewPanel(JPanel cardPanel) {
-        JPanel readAutoresCard = new JPanel();
-        readAutoresCard.setLayout(new BoxLayout(readAutoresCard, BoxLayout.Y_AXIS));
+        JPanel contentPanel = new JPanel();
+
+        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
         JLabel label = new JLabel("Todos os Autores");
         label.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
 
         JScrollPane scrollPane = new JScrollPane();
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        readAutoresCard.add(label, BorderLayout.NORTH);
+        contentPanel.add(label, BorderLayout.NORTH);
 
-        setShowPanelButtons(scrollPane);
-        readAutoresCard.add(scrollPane, BorderLayout.CENTER);
-        cardPanel.add(readAutoresCard, "readAutoresCard");
+        List<Autor> autores = autorController.getAllAuthors();
+
+        updateButtonPanel(scrollPane, autores);
+        contentPanel.add(scrollPane, BorderLayout.CENTER);
+        cardPanel.add(contentPanel, "readAutoresCard");
     }
 
 

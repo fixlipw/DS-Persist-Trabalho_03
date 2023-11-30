@@ -38,6 +38,9 @@ public class AutorController {
     }
 
     public void updateAutor(Autor autor, String newBrief) {
+        if (newBrief.isEmpty()) {
+            throw new IllegalArgumentException("Nome ou descrição do autor não podem sevazios");
+        }
         autor.setBrief(newBrief);
         autorService.saveAutor(autor);
     }
