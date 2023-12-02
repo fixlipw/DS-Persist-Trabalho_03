@@ -9,6 +9,6 @@ public interface AnotacaoMongoDAO extends MongoRepository<Anotacao, String> {
 
         List<Anotacao> findAllByLeituraId(String userid);
 
-        int countAnotacaosByUsuario(String id);
+        int countAnotacaosByLeitura_Usuario_Id(String id);
 
 }

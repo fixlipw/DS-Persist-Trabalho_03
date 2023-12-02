@@ -1,9 +1,7 @@
 package com.ufc.dspersist.repository.mongo;
 
 import com.ufc.dspersist.model.Leitura;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

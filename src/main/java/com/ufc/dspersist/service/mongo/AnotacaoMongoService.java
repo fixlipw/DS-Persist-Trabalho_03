@@ -37,7 +37,7 @@ public class AnotacaoMongoService implements IAnotacaoService {
 
     @Override
     public int countAllAnnotationByUserId(String userId) {
-        return anotacaoRepository.countAnotacaosByUsuario(userId);
+        return anotacaoRepository.countAnotacaosByLeitura_Usuario_Id(userId);
     }
 
 }
