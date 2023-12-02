@@ -33,7 +33,7 @@ public class UsuarioPanel extends JPanel {
         gbc.gridy = 0;
         contentPanel.add(idLabel, gbc);
 
-        JTextField idField = new JTextField(usuario.getId().toString());
+        JTextField idField = new JTextField(usuario.getId());
         idField.setEditable(false);
         gbc.gridx = 1;
         gbc.gridy = 0;

@@ -2,7 +2,7 @@ package com.ufc.dspersist.controller;
 
 import com.ufc.dspersist.model.Anotacao;
 import com.ufc.dspersist.model.Leitura;
-import com.ufc.dspersist.service.AnotacaoService;
+import com.ufc.dspersist.service.IAnotacaoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -12,11 +12,11 @@ import java.util.List;
 @Component
 public class AnotacaoController {
 
-    private final AnotacaoService anotacaoService;
+    private final IAnotacaoService IAnotacaoService;
 
     @Autowired
-    public AnotacaoController(AnotacaoService anotacaoService) {
-        this.anotacaoService = anotacaoService;
+    public AnotacaoController(IAnotacaoService IAnotacaoService) {
+        this.IAnotacaoService = IAnotacaoService;
     }
 
     public void saveAnotacao(Anotacao anotacao, Leitura leitura, String anottation) {
@@ -31,14 +31,14 @@ public class AnotacaoController {
         anotacao.setAnnotation(anottation);
         anotacao.setDate(LocalDateTime.now());
         anotacao.setLeitura(leitura);
-        anotacaoService.saveAnotacao(anotacao);
+        IAnotacaoService.saveAnotacao(anotacao);
     }
 
     public List<Anotacao> getAllAnottation(Leitura leitura) {
-        return anotacaoService.getAllAnnotationByLeituraId(leitura.getId());
+        return IAnotacaoService.getAllAnnotationByLeituraId(leitura.getId());
     }
 
     public void deleteAnotacao(Anotacao anotacao) {
-        anotacaoService.deleteAnotacao(anotacao);
+        IAnotacaoService.deleteAnotacao(anotacao);
     }
 }

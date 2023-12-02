@@ -6,6 +6,9 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.List;
 
@@ -19,18 +22,21 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "leituras")
+@Document(collection = "leituras")
 @Entity
 public class Leitura {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
     @Column(unique = true)
     private String title;
+
     private String authorname;
 
     @Column(name = "pages_qtd")
+    @Field("pages_qtd")
     private Integer pagesQtd;
 
     @Enumerated(EnumType.STRING)
@@ -41,16 +47,19 @@ public class Leitura {
 
     @ManyToOne
     @JoinColumn(name = "usuario_id")
+    @DBRef
     private Usuario usuario;
 
     @ManyToOne
     @JoinColumn(name = "author_id")
+    @DBRef
     private Autor autor;
 
     @OneToMany(mappedBy = "leitura", cascade = CascadeType.ALL, orphanRemoval = true)
+    @DBRef
     private List<Anotacao> anotacoes;
 
-    public Leitura(Integer id) {
+    public Leitura(String id) {
         this.id = id;
     }
 
