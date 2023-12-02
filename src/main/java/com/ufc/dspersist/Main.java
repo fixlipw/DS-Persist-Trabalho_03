@@ -2,7 +2,6 @@ package com.ufc.dspersist;
 
 import com.formdev.flatlaf.FlatIntelliJLaf;
 import com.ufc.dspersist.view.LoginFrame;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,7 +16,6 @@ import javax.swing.*;
 @EnableJpaRepositories("com.ufc.dspersist.repository.jpa")
 @EnableMongoRepositories("com.ufc.dspersist.repository.mongo")
 @EntityScan("com.ufc.dspersist.model")
-@Slf4j
 public class Main implements CommandLineRunner {
 
     private LoginFrame loginFrame;

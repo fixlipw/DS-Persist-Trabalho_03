@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface LeituraJPADAO extends JpaRepository<Leitura, Integer> {
+public interface LeituraJPADAO extends JpaRepository<Leitura, String> {
 
     // Spring
     List<Leitura> findLeiturasByUsuarioId(String id);
