@@ -5,6 +5,7 @@ import com.ufc.dspersist.model.Leitura;
 import java.util.List;
 
 public interface LeituraDAO {
+
     List<Leitura> findLeiturasByUsuarioId(String id);
 
     int countLeituraByUsuarioId(String id);
@@ -20,4 +21,5 @@ public interface LeituraDAO {
     Leitura save(Leitura leitura);
 
     void delete(Leitura leitura);
+
 }

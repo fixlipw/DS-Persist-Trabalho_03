@@ -9,11 +9,11 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-@Profile({"!pg", "!sqlite"})
 public interface AnotacaoMongoDao extends MongoRepository<Anotacao, String>, AnotacaoDAO {
 
      List<Anotacao> findAllByLeituraId(String userid);
 
      int countAnotacaosByUsuario(String id);
+
 
 }

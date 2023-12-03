@@ -7,7 +7,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-@Profile({"!pg", "!sqlite"})
 public interface AutorMongoDao extends MongoRepository<Autor, String>, AutorDAO {
 
 }

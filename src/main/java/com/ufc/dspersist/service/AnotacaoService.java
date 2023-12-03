@@ -10,10 +10,10 @@ import java.util.List;
 @Service
 public class AnotacaoService {
 
-    private AnotacaoDAO anotacaoRepository;
+    private final AnotacaoDAO anotacaoRepository;
 
     @Autowired
-    public void setAnotacaoRepository(AnotacaoDAO anotacaoRepository) {
+    public AnotacaoService(AnotacaoDAO anotacaoRepository) {
         this.anotacaoRepository = anotacaoRepository;
     }
 
