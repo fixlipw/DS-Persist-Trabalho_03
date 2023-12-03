@@ -38,4 +38,7 @@ public interface LeituraJPADAO extends JpaRepository<Leitura, String>, LeituraDA
     @Override
     @Query(value = "select * from leituras l where l.usuario_id = :usuarioId and l.status = 'LIDO'", nativeQuery = true)
     List<Leitura> findLeiturasConcluidasById(String usuarioId);
+
+    @Override
+    Leitura getLeituraByTitle(String title);
 }

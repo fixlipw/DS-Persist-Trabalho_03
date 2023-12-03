@@ -29,6 +29,10 @@ public class LeituraService {
         leituraRepository.delete(leitura);
     }
 
+    public Leitura getLeituraByTitle(String title) {
+        return leituraRepository.getLeituraByTitle(title);
+    }
+
     public List<Leitura> getAllLeiturasById(String userId) {
         return leituraRepository.findLeiturasByUsuarioId(userId);
     }

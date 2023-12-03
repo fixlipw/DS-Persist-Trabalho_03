@@ -30,7 +30,7 @@ public class AnotacaoService {
     }
 
     public int countAllAnnotationByUserId(String userId) {
-        return anotacaoRepository.countAnotacaosByUsuario(userId);
+        return anotacaoRepository.countAnotacaosByLeitura_Usuario_Id(userId);
     }
 
 }

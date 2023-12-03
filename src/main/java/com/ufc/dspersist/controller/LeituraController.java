@@ -56,6 +56,10 @@ public class LeituraController {
         leituraService.deleteLeitura(leitura);
     }
 
+    public Leitura getLeituraByTitle(String title) {
+        return leituraService.getLeituraByTitle(title);
+    }
+
     public List<Leitura> getAllLeiturasById(Usuario usuario) {
         return leituraService.getAllLeiturasById(usuario.getId());
     }

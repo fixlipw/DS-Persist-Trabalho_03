@@ -18,6 +18,6 @@ public interface AnotacaoJPADAO extends JpaRepository<Anotacao, String>, Anotaca
     //JPQL
     @Override
     @Query("select count (a) from Anotacao a join a.leitura l join l.usuario u where u.id = :id")
-    int countAnotacaosByUsuario(String id);
+    int countAnotacaosByLeitura_Usuario_Id(String id);
 
 }

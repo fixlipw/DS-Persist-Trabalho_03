@@ -16,13 +16,19 @@ public class UsuarioPanel extends JPanel {
 
     private final UsuarioController usuarioController;
 
+    private final JPanel contentPanel;
+
     @Autowired
     public UsuarioPanel (UsuarioController usuarioController) {
         this.usuarioController = usuarioController;
+        contentPanel = new JPanel();
     }
 
+
     public void setUsuarioPanel(JPanel cardPanel, Usuario usuario) {
-        JPanel contentPanel = new JPanel(new GridBagLayout());
+        contentPanel.removeAll();
+
+        contentPanel.setLayout(new GridBagLayout());
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -158,6 +164,9 @@ public class UsuarioPanel extends JPanel {
                     usuarioController.saveUser(usuario);
                     JOptionPane.showMessageDialog(null, "Nome de usuário alterado com sucesso!");
                     log.info("Info: Nome de usuário alterado com sucesso");
+                    contentPanel.revalidate();
+                    contentPanel.repaint();
+                    setUsuarioPanel(cardPanel, usuario);
                 } else {
                     JOptionPane.showMessageDialog(null, "Nome de usuário não pode ser vazio. Tente novamente.");
                     log.error("Erro: Nome de usuário não pode ser vazio");

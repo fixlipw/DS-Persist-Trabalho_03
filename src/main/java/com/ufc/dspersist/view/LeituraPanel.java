@@ -249,6 +249,11 @@ public class LeituraPanel {
             } catch (Exception ex) {
                 log.error("Erro ao adicionar leitura: {}", ex.getMessage(), ex);
                 JOptionPane.showMessageDialog(null, "Ocorreu um erro ao adicionar a leitura. Tente Novamente");
+            } finally {
+                titleField.setText("");
+                pagesQtdField.setText("");
+                typeBox.setSelectedIndex(-1);
+                statusBox.setSelectedIndex(-1);
             }
 
         });
@@ -264,7 +269,7 @@ public class LeituraPanel {
         GridBagConstraints gbc = new GridBagConstraints();
         updateLeituraCard.setLayout(new GridBagLayout());
 
-        pagesQtdField = new JTextField("0");
+        pagesQtdField = new JTextField("");
 
         Usuario usuario;
         try {
@@ -317,6 +322,15 @@ public class LeituraPanel {
         gbc.gridx++;
         updateLeituraCard.add(statusBox, gbc);
 
+        titleBox.setSelectedIndex(-1);
+        titleBox.addItemListener(e -> {
+            Leitura leitura = leituraController.getLeituraByTitle((String) titleBox.getSelectedItem());
+            pagesQtdField.setText(leitura.getPagesQtd().toString());
+            statusBox.setSelectedIndex(-1);
+            typeBox.setSelectedIndex(-1);
+            autorBox.setSelectedIndex(-1);
+        });
+
         JButton updateButton = new JButton("Atualizar");
         gbc.gridx = 0;
         gbc.gridy++;
@@ -348,6 +362,12 @@ public class LeituraPanel {
             } catch (Exception exception) {
                 log.error("Erro ao atualizar leitura: {}", exception.getMessage(), exception);
                 JOptionPane.showMessageDialog(null, "Ocorreu um erro ao atualizar a leitura. Tente novamente.");
+            } finally {
+                titleBox.setSelectedIndex(-1);
+                pagesQtdField.setText("");
+                statusBox.setSelectedIndex(-1);
+                typeBox.setSelectedIndex(-1);
+                autorBox.setSelectedIndex(-1);
             }
         });
 

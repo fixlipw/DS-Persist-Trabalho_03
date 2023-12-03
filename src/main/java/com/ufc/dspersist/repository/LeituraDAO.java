@@ -22,4 +22,5 @@ public interface LeituraDAO {
 
     void delete(Leitura leitura);
 
+    Leitura getLeituraByTitle(String title);
 }

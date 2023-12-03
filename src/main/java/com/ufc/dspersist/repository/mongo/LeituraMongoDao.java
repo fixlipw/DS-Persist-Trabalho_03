@@ -29,4 +29,6 @@ public interface LeituraMongoDao extends MongoRepository<Leitura, String>, Leitu
     @Query("{ 'usuario._id' : ?0, 'status' : 'LIDO' }")
     List<Leitura> findLeiturasConcluidasById(String id);
 
+    @Override
+    Leitura getLeituraByTitle(String title);
 }
