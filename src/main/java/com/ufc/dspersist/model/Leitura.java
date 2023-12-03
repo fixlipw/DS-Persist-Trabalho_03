@@ -12,12 +12,6 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.List;
 
-@NamedQueries
-        ({
-            @NamedQuery(name = "Leitura.findLeiturasNaoLidasById", query = "select l FROM Leitura l where l.usuario.id = :usuarioId and l.status = 'NAO_LIDO'"),
-            @NamedQuery(name = "Leitura.findLeiturasEmAndamentoById", query = "select l from Leitura l where l.usuario.id = :usuarioId and l.status = 'LENDO'")
-        })
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

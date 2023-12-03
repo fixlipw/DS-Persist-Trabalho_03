@@ -14,6 +14,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.io.Reader;
+import java.nio.file.Files;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -23,6 +27,9 @@ public class AnotacaoPainel {
     private final AnotacaoController anotacaoController;
     private final UsuarioController usuarioController;
     private final LeituraController leituraController;
+
+    private JTextField anotacaoTextArea;
+    private JComboBox<Object> leituraBox;
 
     private final JPanel buttonPanel;
 
@@ -167,4 +174,5 @@ public class AnotacaoPainel {
         readAnotacaoCard.add(scrollPane, BorderLayout.CENTER);
         cardPanel.add(readAnotacaoCard, "readAnotacaoCard");
     }
+
 }

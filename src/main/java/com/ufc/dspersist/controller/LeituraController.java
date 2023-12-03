@@ -15,10 +15,10 @@ import java.util.List;
 @Component
 public class LeituraController {
 
-    LeituraService leituraService;
+    private final LeituraService leituraService;
 
     @Autowired
-    private void setLeituraService(LeituraService leituraService) {
+    public LeituraController(LeituraService leituraService) {
         this.leituraService = leituraService;
     }
 

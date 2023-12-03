@@ -1,7 +1,6 @@
-package com.ufc.dspersist;
+package com.ufc.dspersist.view;
 
 import com.formdev.flatlaf.FlatIntelliJLaf;
-import com.ufc.dspersist.view.LoginFrame;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

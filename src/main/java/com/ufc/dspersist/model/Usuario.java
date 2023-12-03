@@ -9,8 +9,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 
-@NamedQuery(name = "Usuario.findByIdNamedQuery", query = "select u from Usuario u where u.id = :id")
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

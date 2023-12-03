@@ -10,10 +10,9 @@ import java.util.List;
 @Component
 public class AutorController {
 
-    private AutorService autorService;
+    private final AutorService autorService;
 
-    @Autowired
-    public void setAutorService(AutorService autorService) {
+    public AutorController(AutorService autorService) {
         this.autorService = autorService;
     }
 

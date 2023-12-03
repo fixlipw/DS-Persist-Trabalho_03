@@ -33,7 +33,7 @@ public class UsuarioService {
     }
 
     public Optional<Usuario> getUsuario(String id) {
-        return Optional.ofNullable(usuarioRepository.findByIdNamedQuery(id));
+        return usuarioRepository.findById(id);
     }
 
 }

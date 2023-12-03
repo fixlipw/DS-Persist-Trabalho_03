@@ -2,14 +2,12 @@ package com.ufc.dspersist.repository.jpa;
 
 import com.ufc.dspersist.model.Leitura;
 import com.ufc.dspersist.repository.LeituraDAO;
-import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Primary
 @Repository
 public interface LeituraJPADAO extends JpaRepository<Leitura, String>, LeituraDAO {
 
@@ -26,12 +24,14 @@ public interface LeituraJPADAO extends JpaRepository<Leitura, String>, LeituraDA
     @Query("select l from Leitura l where l.usuario.id = :usuarioId AND l.status = 'ABANDONADO'")
     List<Leitura> findLeiturasAbandonadasById(String usuarioId);
 
-    //Named Query
+    //JPQL
     @Override
+    @Query("select l from Leitura l where l.usuario.id = :usuarioId and l.status = 'LENDO'")
     List<Leitura> findLeiturasNaoLidasById(String usuarioId);
 
-    //Named Query
+    //JPQL
     @Override
+    @Query("select l FROM Leitura l where l.usuario.id = :usuarioId and l.status = 'NAO_LIDO'")
     List<Leitura> findLeiturasEmAndamentoById(String usuarioId);
 
     //Nativa

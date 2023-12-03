@@ -2,12 +2,12 @@ package com.ufc.dspersist.repository.jpa;
 
 import com.ufc.dspersist.model.Usuario;
 import com.ufc.dspersist.repository.UsuarioDAO;
-import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-@Primary
+import java.util.Optional;
+
 @Repository
 public interface UsuarioJPADAO extends JpaRepository<Usuario, String>, UsuarioDAO {
 
@@ -18,6 +18,7 @@ public interface UsuarioJPADAO extends JpaRepository<Usuario, String>, UsuarioDA
 
     //Named Query
     @Override
-    Usuario findByIdNamedQuery(String id);
+    @Query("select u from Usuario u where u.id = :id")
+    Optional<Usuario> findById(String id);
 
 }

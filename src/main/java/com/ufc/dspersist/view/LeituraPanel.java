@@ -91,7 +91,7 @@ public class LeituraPanel {
                         "<br><b>Status:</b> " + leitura.getStatus().getStatus() +
                         "</html>", "Informações", JOptionPane.DEFAULT_OPTION,
                 JOptionPane.INFORMATION_MESSAGE, null,
-                new Object[] {"Deletar", "Atualizar", "Cancelar"}, 0
+                new Object[] {"Deletar", "Anotar", "Cancelar"}, 0
         );
 
         if (option == 0) {
@@ -241,7 +241,6 @@ public class LeituraPanel {
                             typeBox.getSelectedItem(),
                             statusBox.getSelectedItem()
                     );
-
                     JOptionPane.showMessageDialog(null, "Leitura adicionada com sucesso!");
                 } else {
                     JOptionPane.showMessageDialog(null, "Selecione um autor válido.");

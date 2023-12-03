@@ -11,6 +11,7 @@ import java.awt.event.MouseEvent;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
 import java.util.List;
 
 @Slf4j
@@ -197,14 +198,24 @@ public class AutorPanel {
         layout.setAutoCreateContainerGaps(true);
 
         GroupLayout.SequentialGroup hGroup = layout.createSequentialGroup();
-        hGroup.addGroup(layout.createParallelGroup().addComponent(autorNameLabel).addComponent(autorBriefLabel));
-        hGroup.addGroup(layout.createParallelGroup().addComponent(authorNameField).addComponent(scrollPane).addComponent(addButton));
+        hGroup.addGroup(layout.createParallelGroup()
+                .addComponent(autorNameLabel)
+                .addComponent(autorBriefLabel));
+        hGroup.addGroup(layout.createParallelGroup()
+                .addComponent(authorNameField)
+                .addComponent(scrollPane)
+                .addComponent(addButton));
         layout.setHorizontalGroup(hGroup);
 
         GroupLayout.SequentialGroup vGroup = layout.createSequentialGroup();
-        vGroup.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(autorNameLabel).addComponent(authorNameField));
-        vGroup.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(autorBriefLabel).addComponent(scrollPane));
-        vGroup.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(addButton));
+        vGroup.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                .addComponent(autorNameLabel)
+                .addComponent(authorNameField));
+        vGroup.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                .addComponent(autorBriefLabel)
+                .addComponent(scrollPane));
+        vGroup.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                .addComponent(addButton));
         layout.setVerticalGroup(vGroup);
 
         cardPanel.add(contentPanel, "createAutoresCard");
