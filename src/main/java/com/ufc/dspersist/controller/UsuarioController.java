@@ -2,9 +2,9 @@ package com.ufc.dspersist.controller;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import com.ufc.dspersist.model.Usuario;
-import com.ufc.dspersist.service.IAnotacaoService;
-import com.ufc.dspersist.service.ILeituraService;
-import com.ufc.dspersist.service.IUsuarioService;
+import com.ufc.dspersist.service.AnotacaoService;
+import com.ufc.dspersist.service.LeituraService;
+import com.ufc.dspersist.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -13,17 +13,17 @@ import javax.swing.*;
 @Component
 public class UsuarioController {
 
-    private final IUsuarioService IUsuarioService;
-    private final ILeituraService ILeituraService;
-    private final IAnotacaoService IAnotacaoService;
+    private final UsuarioService usuarioService;
+    private final LeituraService leituraService;
+    private final AnotacaoService anotacaoService;
 
     private Usuario user;
 
     @Autowired
-    public UsuarioController(IUsuarioService IUsuarioService, ILeituraService ILeituraService, IAnotacaoService IAnotacaoService) {
-        this.IUsuarioService = IUsuarioService;
-        this.ILeituraService = ILeituraService;
-        this.IAnotacaoService = IAnotacaoService;
+    public UsuarioController(UsuarioService UsuarioService, LeituraService LeituraService, AnotacaoService AnotacaoService) {
+        this.usuarioService = UsuarioService;
+        this.leituraService = LeituraService;
+        this.anotacaoService = AnotacaoService;
     }
 
     public void createUser(JTextField usrnField, JPasswordField pswField, JPasswordField cpswField) {
@@ -43,14 +43,14 @@ public class UsuarioController {
             return;
         }
 
-        user = IUsuarioService.createUser(username, hashpsw);
+        user = usuarioService.createUser(username, hashpsw);
 
     }
 
     public Usuario authUser(JTextField usrnField, JPasswordField pswField) {
 
         String username = usrnField.getText();
-        user = IUsuarioService.findUsuarioByUsername(username);
+        user = usuarioService.findUsuarioByUsername(username);
 
         BCrypt.Result result;
 
@@ -70,15 +70,15 @@ public class UsuarioController {
     }
 
     public Usuario getUsuario(Usuario user) {
-        return IUsuarioService.getUsuario(user.getId()).orElseThrow();
+        return usuarioService.getUsuario(user.getId()).orElseThrow();
     }
 
     public int countLeiturasById(Usuario usuario) {
-        return ILeituraService.getLeiturasQtd(usuario.getId());
+        return leituraService.getLeiturasQtd(usuario.getId());
     }
 
     public int countAnotacoesById(Usuario usuario) {
-        return IAnotacaoService.countAllAnnotationByUserId(usuario.getId());
+        return anotacaoService.countAllAnnotationByUserId(usuario.getId());
     }
 
     public void saveUser(Usuario usuario) {
@@ -87,7 +87,7 @@ public class UsuarioController {
             throw new IllegalArgumentException("O nome do usuário deve ser maior que 2. Tente novamente.");
         }
 
-        IUsuarioService.saveUser(usuario);
+        usuarioService.saveUser(usuario);
     }
 
 }

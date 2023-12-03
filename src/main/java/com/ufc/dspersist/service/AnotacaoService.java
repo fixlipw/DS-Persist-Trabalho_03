@@ -1,43 +1,34 @@
-package com.ufc.dspersist.service.jpa;
+package com.ufc.dspersist.service;
 
 import com.ufc.dspersist.model.Anotacao;
-import com.ufc.dspersist.repository.jpa.AnotacaoJPADAO;
-import com.ufc.dspersist.service.IAnotacaoService;
+import com.ufc.dspersist.repository.AnotacaoDAO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-@Primary
-@Profile({"pg", "sqlite"})
-public class AnotacaoJPAService implements IAnotacaoService {
+public class AnotacaoService {
 
-    private AnotacaoJPADAO anotacaoRepository;
+    private AnotacaoDAO anotacaoRepository;
 
     @Autowired
-    public void setAnotacaoRepository(AnotacaoJPADAO anotacaoRepository) {
+    public void setAnotacaoRepository(AnotacaoDAO anotacaoRepository) {
         this.anotacaoRepository = anotacaoRepository;
     }
 
-    @Override
     public void saveAnotacao(Anotacao anotacao) {
         anotacaoRepository.save(anotacao);
     }
 
-    @Override
     public void deleteAnotacao(Anotacao anotacao) {
         anotacaoRepository.delete(anotacao);
     }
 
-    @Override
     public List<Anotacao> getAllAnnotationByLeituraId(String leituraId) {
         return anotacaoRepository.findAllByLeituraId(leituraId);
     }
 
-    @Override
     public int countAllAnnotationByUserId(String userId) {
         return anotacaoRepository.countAnotacaosByUsuario(userId);
     }

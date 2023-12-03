@@ -1,24 +1,27 @@
 package com.ufc.dspersist.repository.mongo;
 
 import com.ufc.dspersist.model.Leitura;
+import com.ufc.dspersist.repository.LeituraDAO;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public interface LeituraMongoDao extends MongoRepository<Leitura, String> {
+@Profile({"!pg", "!sqlite"})
+public interface LeituraMongoDao extends MongoRepository<Leitura, String>, LeituraDAO {
 
-    List<Leitura> findLeiturasByUsuarioIdMongo(String usuario_id);
+    List<Leitura> findLeiturasByUsuarioId(String usuario_id);
 
-    int countLeituraByUsuarioIdMongo(String usuario_id);
+    int countLeituraByUsuarioId(String usuario_id);
 
-    List<Leitura> findLeiturasAbandonadasByIdMongo(String id);
+    List<Leitura> findLeiturasAbandonadasById(String id);
 
-    List<Leitura> findLeiturasNaoLidasByIdMongo(String usuarioId);
+    List<Leitura> findLeiturasNaoLidasById(String usuarioId);
 
-    List<Leitura> findLeiturasEmAndamentoByIdMongo(String usuarioId);
+    List<Leitura> findLeiturasEmAndamentoById(String usuarioId);
 
-    List<Leitura> findLeiturasConcluidasByIdMongo(String id);
+    List<Leitura> findLeiturasConcluidasById(String id);
 
 }

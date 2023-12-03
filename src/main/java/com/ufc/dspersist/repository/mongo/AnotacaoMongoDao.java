@@ -1,16 +1,19 @@
 package com.ufc.dspersist.repository.mongo;
 
 import com.ufc.dspersist.model.Anotacao;
+import com.ufc.dspersist.repository.AnotacaoDAO;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public interface AnotacaoMongoDao extends MongoRepository<Anotacao, String> {
+@Profile({"!pg", "!sqlite"})
+public interface AnotacaoMongoDao extends MongoRepository<Anotacao, String>, AnotacaoDAO {
 
-     List<Anotacao> findAllByLeituraIdMongo(String userid);
+     List<Anotacao> findAllByLeituraId(String userid);
 
-     int countAnotacaosByLeitura_Usuario_IdMongo(String id);
+     int countAnotacaosByUsuario(String id);
 
 }
