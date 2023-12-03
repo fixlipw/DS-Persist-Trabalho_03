@@ -1,7 +1,7 @@
 package com.ufc.dspersist.service.mongo;
 
 import com.ufc.dspersist.model.Autor;
-import com.ufc.dspersist.repository.mongo.AutorMongoDAO;
+import com.ufc.dspersist.repository.mongo.AutorMongoDao;
 import com.ufc.dspersist.service.IAutorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
@@ -13,10 +13,10 @@ import java.util.List;
 @Profile({"!pg", "!sqlite"})
 public class AutorMongoService implements IAutorService {
 
-    private final AutorMongoDAO autorRepository;
+    private final AutorMongoDao autorRepository;
 
     @Autowired
-    public AutorMongoService(AutorMongoDAO autorRepository) {
+    public AutorMongoService(AutorMongoDao autorRepository) {
         this.autorRepository = autorRepository;
     }
 

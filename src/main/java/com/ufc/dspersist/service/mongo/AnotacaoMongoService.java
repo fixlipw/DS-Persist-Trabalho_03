@@ -1,7 +1,7 @@
 package com.ufc.dspersist.service.mongo;
 
 import com.ufc.dspersist.model.Anotacao;
-import com.ufc.dspersist.repository.mongo.AnotacaoMongoDAO;
+import com.ufc.dspersist.repository.mongo.AnotacaoMongoDao;
 import com.ufc.dspersist.service.IAnotacaoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
@@ -13,10 +13,10 @@ import java.util.List;
 @Profile({"!pg", "!sqlite"})
 public class AnotacaoMongoService implements IAnotacaoService {
 
-    private AnotacaoMongoDAO anotacaoRepository;
+    private AnotacaoMongoDao anotacaoRepository;
 
     @Autowired
-    public void setAnotacaoRepository(AnotacaoMongoDAO anotacaoRepository) {
+    public void setAnotacaoRepository(AnotacaoMongoDao anotacaoRepository) {
         this.anotacaoRepository = anotacaoRepository;
     }
 
@@ -32,12 +32,12 @@ public class AnotacaoMongoService implements IAnotacaoService {
 
     @Override
     public List<Anotacao> getAllAnnotationByLeituraId(String leituraId) {
-        return anotacaoRepository.findAllByLeituraId(leituraId);
+        return anotacaoRepository.findAllByLeituraIdMongo(leituraId);
     }
 
     @Override
     public int countAllAnnotationByUserId(String userId) {
-        return anotacaoRepository.countAnotacaosByLeitura_Usuario_Id(userId);
+        return anotacaoRepository.countAnotacaosByLeitura_Usuario_IdMongo(userId);
     }
 
 }

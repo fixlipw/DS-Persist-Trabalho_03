@@ -1,7 +1,7 @@
 package com.ufc.dspersist.service.mongo;
 
 import com.ufc.dspersist.model.Usuario;
-import com.ufc.dspersist.repository.mongo.UsuarioMongoDAO;
+import com.ufc.dspersist.repository.mongo.UsuarioMongoDao;
 import com.ufc.dspersist.service.IUsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
@@ -13,10 +13,10 @@ import java.util.Optional;
 @Profile({"!pg", "!sqlite"})
 public class UsuarioMongoService implements IUsuarioService {
 
-    private final UsuarioMongoDAO usuarioRepository;
+    private final UsuarioMongoDao usuarioRepository;
 
     @Autowired
-    public UsuarioMongoService(UsuarioMongoDAO usuarioRepository) {
+    public UsuarioMongoService(UsuarioMongoDao usuarioRepository) {
         this.usuarioRepository = usuarioRepository;
     }
 
@@ -32,11 +32,11 @@ public class UsuarioMongoService implements IUsuarioService {
     }
 
     public Usuario findUsuarioByUsername(String username) {
-        return usuarioRepository.findUsuarioByUsername(username);
+        return usuarioRepository.findUsuarioByUsernameMongo(username);
     }
 
     public Optional<Usuario> getUsuario(String id) {
-        return usuarioRepository.findById(id);
+        return usuarioRepository.findByIdMongo(id);
     }
 
 }
