@@ -13,8 +13,8 @@ import javax.swing.*;
 
 @SpringBootApplication(scanBasePackages = "com.ufc.dspersist")
 
-//@EnableJpaRepositories("com.ufc.dspersist.repository.jpa")
-@EnableMongoRepositories("com.ufc.dspersist.repository.mongo")
+@EnableJpaRepositories("com.ufc.dspersist.repository.jpa")
+//@EnableMongoRepositories("com.ufc.dspersist.repository.mongo")
 
 @EntityScan("com.ufc.dspersist.model")
 public class Main implements CommandLineRunner {

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
+@Profile({"!pg", "!sqlite"})
 public interface LeituraMongoDao extends MongoRepository<Leitura, String>, LeituraDAO {
 
     List<Leitura> findLeiturasByUsuarioId(String usuario_id);
