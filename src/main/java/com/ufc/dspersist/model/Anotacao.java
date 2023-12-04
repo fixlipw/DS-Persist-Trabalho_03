@@ -22,7 +22,7 @@ public class Anotacao {
     private LocalDateTime date;
     private String annotation;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "leitura_id")
     private Leitura leitura;
 

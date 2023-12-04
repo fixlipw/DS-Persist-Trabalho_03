@@ -39,12 +39,12 @@ public class Leitura {
     @Enumerated(EnumType.STRING)
     private BookStatus status;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id")
     @DBRef
     private Usuario usuario;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id")
     @DBRef
     private Autor autor;

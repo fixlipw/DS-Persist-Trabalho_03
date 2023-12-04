@@ -138,7 +138,7 @@ public class UsuarioPanel extends JPanel {
         editProfileButton.addActionListener(e -> {
             JPasswordField passwordField = new JPasswordField();
             Object[] message = {"Confirme sua senha:", passwordField};
-            int option = JOptionPane.showConfirmDialog(this, message, "Confirmar Senha", JOptionPane.OK_CANCEL_OPTION);
+            int option = JOptionPane.showConfirmDialog(this, message, "Alterar nome de usuário", JOptionPane.OK_CANCEL_OPTION);
 
             if (option == JOptionPane.OK_OPTION) {
                 BCrypt.Result result;
@@ -171,7 +171,6 @@ public class UsuarioPanel extends JPanel {
                     JOptionPane.showMessageDialog(null, "Nome de usuário não pode ser vazio. Tente novamente.");
                     log.error("Erro: Nome de usuário não pode ser vazio");
                 }
-
             }
         });
     }

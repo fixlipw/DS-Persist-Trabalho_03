@@ -64,7 +64,7 @@ public class AnotacaoPainel {
 
     private JButton createAnotacaoButton(Anotacao anotacao, Leitura leitura, JScrollPane scrollPane) {
         JButton anottacionButton = new JButton("<html>" + leitura.getTitle() + "<br><b>Data:</b> " + anotacao.getDate() + "</html>");
-        anottacionButton.setBorderPainted(false);
+        anottacionButton.setBorderPainted(true);
         anottacionButton.setPreferredSize(new Dimension(150, 75));
 
         anottacionButton.addMouseListener(new MouseAdapter() {

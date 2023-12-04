@@ -82,7 +82,7 @@ public class MainFrame extends JFrame {
         readLeituraMenuItem.add(listarAbandonadoItem);
         updateLeituraMenuItem = new JMenuItem("Atualizar Leitura");
 
-        readAnotacaoMenuItem = new JMenuItem("Visualizar Minhas Anotações");
+        readAnotacaoMenuItem = new JMenuItem("Visualizar Anotações");
         createAutorMenuItem = new JMenuItem("Inserir Autores");
         readAutorMenuItem = new JMenuItem("Visualizar Autores");
 

@@ -151,8 +151,8 @@ public class LoginFrame extends JFrame {
                 JOptionPane.showMessageDialog(null, "Bem-vindo(a), " + usuario.getUsername());
                 log.info("Info: Usuário autenticado com sucesso.");
                 mainFrame.setLoggedUsuario(usuario);
-                setVisible(false);
                 mainFrame.setVisible(true);
+                dispose();
             }
         } catch (Exception e) {
             log.error("Erro: {}", e.getMessage(), e);

@@ -48,7 +48,7 @@ public class AutorPanel {
 
     private JButton createAutorButton(Autor autor, JScrollPane scrollPane) {
         JButton autorButton = new JButton(autor.getAuthorName());
-        autorButton.setBorderPainted(false);
+        autorButton.setBorderPainted(true);
         autorButton.setPreferredSize(new Dimension(150, 75));
 
         autorButton.addMouseListener(new MouseAdapter() {

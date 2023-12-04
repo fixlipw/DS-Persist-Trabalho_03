@@ -1,6 +1,7 @@
 package com.ufc.dspersist.view;
 
 import com.formdev.flatlaf.FlatIntelliJLaf;
+import com.formdev.flatlaf.themes.FlatMacLightLaf;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -13,8 +14,8 @@ import javax.swing.*;
 
 @SpringBootApplication(scanBasePackages = "com.ufc.dspersist")
 
-//@EnableJpaRepositories("com.ufc.dspersist.repository.jpa")
-@EnableMongoRepositories("com.ufc.dspersist.repository.mongo")
+@EnableJpaRepositories("com.ufc.dspersist.repository.jpa")
+//@EnableMongoRepositories("com.ufc.dspersist.repository.mongo")
 
 @EntityScan("com.ufc.dspersist.model")
 public class Main implements CommandLineRunner {
@@ -22,11 +23,12 @@ public class Main implements CommandLineRunner {
     private LoginFrame loginFrame;
 
     public static void main(String[] args) {
-        FlatIntelliJLaf.setup();
+        FlatMacLightLaf.setup();
         UIManager.put("Button.arc", 20);
         UIManager.put("Component.arc", 20);
         UIManager.put("ProgressBar.arc", 20);
         UIManager.put("TextComponent.arc", 20);
+        UIManager.put("flatlaf.menuBarEmbedded", false);
         SwingUtilities.invokeLater(() -> {
             SpringApplicationBuilder builder = new SpringApplicationBuilder(Main.class);
             builder.headless(false).run(args);

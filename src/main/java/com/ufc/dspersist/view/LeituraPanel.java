@@ -330,6 +330,9 @@ public class LeituraPanel {
             typeBox.setSelectedIndex(-1);
             autorBox.setSelectedIndex(-1);
         });
+        typeBox.setSelectedIndex(-1);
+        statusBox.setSelectedIndex(-1);
+        autorBox.setSelectedIndex(-1);
 
         JButton updateButton = new JButton("Atualizar");
         gbc.gridx = 0;
