@@ -1,6 +1,5 @@
 package com.ufc.dspersist.view;
 
-import com.formdev.flatlaf.FlatIntelliJLaf;
 import com.formdev.flatlaf.themes.FlatMacLightLaf;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -14,8 +13,8 @@ import javax.swing.*;
 
 @SpringBootApplication(scanBasePackages = "com.ufc.dspersist")
 
-@EnableJpaRepositories("com.ufc.dspersist.repository.jpa")
-//@EnableMongoRepositories("com.ufc.dspersist.repository.mongo")
+//@EnableJpaRepositories("com.ufc.dspersist.repository.jpa")
+@EnableMongoRepositories("com.ufc.dspersist.repository.mongo")
 
 @EntityScan("com.ufc.dspersist.model")
 public class Main implements CommandLineRunner {

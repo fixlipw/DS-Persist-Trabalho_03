@@ -10,7 +10,6 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-@Profile({"!pg", "!sqlite"})
 public interface UsuarioMongoDao extends MongoRepository<Usuario, String>, UsuarioDAO {
 
     Usuario findUsuarioByUsername(String username);
