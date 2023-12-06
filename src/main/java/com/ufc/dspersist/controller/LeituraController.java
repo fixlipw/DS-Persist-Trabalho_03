@@ -5,7 +5,7 @@ import com.ufc.dspersist.enumeration.BookType;
 import com.ufc.dspersist.model.Autor;
 import com.ufc.dspersist.model.Leitura;
 import com.ufc.dspersist.model.Usuario;
-import com.ufc.dspersist.service.LeituraService;
+import com.ufc.dspersist.repository.LeituraDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,11 +15,11 @@ import java.util.List;
 @Component
 public class LeituraController {
 
-    private final LeituraService leituraService;
+    private final LeituraDAO leituraRepository;
 
     @Autowired
-    public LeituraController(LeituraService leituraService) {
-        this.leituraService = leituraService;
+    public LeituraController(LeituraDAO leituraRepository) {
+        this.leituraRepository = leituraRepository;
     }
 
     public void saveLeitura(Usuario usuario, String title, Autor author, String pages, Object type, Object status) {
@@ -44,39 +44,39 @@ public class LeituraController {
         leitura.setStatus(bookStatus);
         leitura.setUsuario(usuario);
 
-        leituraService.saveLeitura(leitura);
+        leituraRepository.save(leitura);
 
     }
 
     public void saveLeitura(Leitura leitura) {
-        leituraService.saveLeitura(leitura);
+        leituraRepository.save(leitura);
     }
 
     public void deleteLeitura(Leitura leitura) {
-        leituraService.deleteLeitura(leitura);
+        leituraRepository.delete(leitura);
     }
 
     public Leitura getLeituraByTitle(String title) {
-        return leituraService.getLeituraByTitle(title);
+        return leituraRepository.getLeituraByTitle(title);
     }
 
     public List<Leitura> getAllLeiturasById(Usuario usuario) {
-        return leituraService.getAllLeiturasById(usuario.getId());
+        return leituraRepository.findLeiturasByUsuarioId(usuario.getId());
     }
 
     public List<Leitura> getLeiturasNaoLidasById(Usuario usuario) {
-        return leituraService.getLeiturasNaoLidasById(usuario.getId());
+        return leituraRepository.findLeiturasNaoLidasById(usuario.getId());
     }
 
     public List<Leitura> getLeiturasAbandonadasById(Usuario usuario) {
-        return leituraService.getLeiturasAbandonadasById(usuario.getId());
+        return leituraRepository.findLeiturasAbandonadasById(usuario.getId());
     }
 
     public List<Leitura> getLeiturasEmAndamentoById(Usuario usuario) {
-        return leituraService.getLeiturasEmAndamentoById(usuario.getId());
+        return leituraRepository.findLeiturasEmAndamentoById(usuario.getId());
     }
 
     public List<Leitura> getLeiturasConcluidasById(Usuario usuario) {
-        return leituraService.getLeiturasConcluidasById(usuario.getId());
+        return leituraRepository.findLeiturasConcluidasById(usuario.getId());
     }
 }

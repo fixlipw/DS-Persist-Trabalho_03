@@ -1,8 +1,7 @@
 package com.ufc.dspersist.controller;
 
 import com.ufc.dspersist.model.Autor;
-import com.ufc.dspersist.service.AutorService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.ufc.dspersist.repository.AutorDAO;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -10,14 +9,14 @@ import java.util.List;
 @Component
 public class AutorController {
 
-    private final AutorService autorService;
+    private final AutorDAO autorRepository;
 
-    public AutorController(AutorService autorService) {
-        this.autorService = autorService;
+    public AutorController(AutorDAO autorRepository) {
+        this.autorRepository = autorRepository;
     }
 
     public List<Autor> getAllAuthors() {
-        return autorService.getAllAuthors();
+        return autorRepository.findAll();
     }
 
     public void saveAutor(String autorName, String brief) {
@@ -28,12 +27,12 @@ public class AutorController {
         Autor autor = new Autor();
         autor.setAuthorName(autorName);
         autor.setBrief(brief);
-        autorService.saveAutor(autor);
+        autorRepository.save(autor);
 
     }
 
     public void deleteAutor(Autor autor) {
-        autorService.deleteAutor(autor);
+        autorRepository.delete(autor);
     }
 
     public void updateAutor(Autor autor, String newBrief) {
@@ -41,6 +40,6 @@ public class AutorController {
             throw new IllegalArgumentException("Nome ou descrição do autor não podem sevazios");
         }
         autor.setBrief(newBrief);
-        autorService.saveAutor(autor);
+        autorRepository.save(autor);
     }
 }
